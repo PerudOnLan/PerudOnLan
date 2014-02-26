@@ -1,0 +1,28 @@
+Reseaux
+A. Tanenbaum
+1997
+
+Administration unix
+J-M. Moreno
+2003
+
+Programmation systeme en C sous Linux
+C. Blaess
+2002
+
+Latex companion
+M. Goossens
+2001
+
+Le routard galactique
+D. Adams
+1979
+
+L'apprenti assassin
+R. Hobb
+1995
+
+Le cercle litteraire des amateurs d'epluchures de patates
+M.A. Shaffer
+2009
+
