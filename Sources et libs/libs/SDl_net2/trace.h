@@ -11,7 +11,7 @@ extern int TRACE_FLAG;
 #define traceOn() (TRACE_FLAG = 1)
 #define traceOff() (TRACE_FLAG = 0)
 #ifdef __cplusplus
-#include <iostream.h>
+#include <iostream>
 #define trace() (cout << (__FILE__) << "@" << (__LINE__) << endl << flush);
 
 #define ctrace()                                                \

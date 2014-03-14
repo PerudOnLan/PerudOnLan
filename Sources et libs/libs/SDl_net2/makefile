@@ -11,6 +11,7 @@ CPPOPTS = -g -Wall -c $(shell sdl-config --cflags) -Wno-deprecated
 #header files
 INCLUDES = \
 	-I. \
+	-I/usr/include/SDL \
 	$(NULL)
 
 #library directories
@@ -21,6 +22,7 @@ LIBDIRS = \
 #libraries to link with
 LIBS = \
 	-lSDL_net \
+	-lSDL-1.2 \
 	$(NULL)
 
 #all compiler flags
