@@ -74,14 +74,14 @@ int main(int argc, char **argv)
 
       case NET2_TCPCLOSEEVENT:
         printf("close(%d)\n", NET2_GetSocket(&ev));
-        NET2_TCPClose(NET2_GetSocket(&ev));
+	NET2_TCPClose(NET2_GetSocket(&ev));
         count--;
-        if (0 >= count)
+        /*if (0 >= count)
         {
           exit(0);
         }
+	*/
         break;
-
       case NET2_ERROREVENT:
         printf("Error: %s(%d)\n", NET2_GetEventError(&ev), NET2_GetSocket(&ev));
         exit(0);

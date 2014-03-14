@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 
           printf("len=%d\n", len);
           count += len;
-
+	  SDL_Delay(100);
           for (i = 0; i < len; i++)
           {
             putchar(buf[i]);
@@ -60,8 +60,10 @@ int main(int argc, char **argv)
           }
         }
 
-        if (count > 10000)
+        if (count > 5000)
         {
+	  printf ("\nfin du test\n");
+	  NET2_TCPClose(NET2_GetSocket(&ev));
           exit(0);
         }
 
