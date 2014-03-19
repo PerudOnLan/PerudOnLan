@@ -661,7 +661,7 @@ char *mySDL_Init(Uint32 flags)
 {
   if (-1 == SDL_Init(flags))
   {
-    return SDL_GetError();
+     return SDL_GetError();
   }
 
   if (-1 == SDLNet_Init())
@@ -689,8 +689,8 @@ void mySDLInitOrQuit(Uint32 flags)
 
   if (NULL != (message = mySDL_Init(flags)))
   {
-    printf("Failed to initialize SDL error=%s\n", message);
-    exit(1);
+    printf("Erreur lors de l'initialisation de la SDL =%s\n", message);
+    exit(EXIT_FAILURE);
   }
 
   atexit(mySDL_Quit);

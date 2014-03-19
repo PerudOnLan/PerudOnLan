@@ -17,12 +17,14 @@ INCLUDES = \
 #library directories
 LIBDIRS = \
 	-L/usr/lib \
+	-L. \
 	$(NULL)
 
 #libraries to link with
 LIBS = \
 	-lSDL_net \
 	-lSDL-1.2 \
+	-lSDL_net2 \
 	$(NULL)
 
 #all compiler flags
@@ -36,7 +38,7 @@ LFLAGS = $(LIBDIRS) $(shell sdl-config --libs)
 	$(CPP) -c $< $(CFLAGS) -o $@
 
 %.o:	%.c
-	$(CC) -c $< $(CFLAGS) -o $@
+	$(CC) -c -fPIC $< $(CFLAGS) -o $@
 
 #local headers to depend on
 HEADERS = \
@@ -77,7 +79,7 @@ CPPMAINS = \
 	$(NULL)
 
 #all local .o files
-OBJS =  ${CPPLIBS:.cpp=.o} ${CCLIBS:.c=.o}
+OBJS =  ${CPPLIBS:.cpp=.o}
 MAINS =  ${CPPMAINS:.cpp=.o} ${CCMAINS:.c=.o}
 
 default: depend client server ts tc us uc tus set

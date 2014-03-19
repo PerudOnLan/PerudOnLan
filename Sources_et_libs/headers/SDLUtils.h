@@ -1,5 +1,5 @@
-#ifndef _FASTEVENTS_H_
-#define _FASTEVENTS_H_
+#ifndef _SDLUTILS_H_
+#define _SDLUTILS_H_
 /*
     NET2 is a threaded, event based, network IO library for SDL.
     Copyright (C) 2002 Bob Pendleton
@@ -26,21 +26,33 @@
     Bob@Pendleton.com
 */
 
-#include "SDL.h"
+#include "SDL/SDL.h"
+#include "SDL/SDL_net.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-  int FE_Init();                         // Initialize FE
-  void FE_Quit();                        // shutdown FE
+  void printSDLColor(const SDL_Color *c);
+  void printSDLEvent(SDL_Event *e);
+  void printSDLInitFlags(const Uint32 f);
+  void printSDLModifiers(SDLMod mod);
+  void printSDLOpenGLAttrs();
+  void printSDLPalette(const SDL_Palette *p);
+  void printSDLPixelFormat(const SDL_PixelFormat *f);
+  void printSDLRect(const SDL_Rect *r);
+  void printSDLSurface(const SDL_Surface *s);
+  void printSDLSurfaceFlags(const Uint32 f);
+  void printSDLVideoInfo(const SDL_VideoInfo *vi);
+  void printIPaddress(IPaddress *addr);  // IPaddress structure print utility
+  void printNET2Event(SDL_Event *event); // net2 event print utility
+  void printUDPpacket(UDPpacket *packet);
+  void printBytes(char *buf, int len);
 
-  void FE_PumpEvents();                  // replacement for SDL_PumpEvents
-  int FE_PollEvent(SDL_Event *event);    // replacement for SDL_PollEvent
-  int FE_WaitEvent(SDL_Event *event);    // replacement for SDL_WaitEvent
-  int FE_PushEvent(SDL_Event *event);    // replacement for SDL_PushEvent
+  void mySDLInitOrQuit(Uint32 flags);   // Initialize SDL and networking or die trying
+  char *mySDL_Init(Uint32 flags);       // Initialize networking and the rest of SDL
+  void mySDL_Quit();                    // Quit networking and the rest of SDL
 
-  char *FE_GetError();                   // get the last error
 #ifdef __cplusplus
 }
 #endif

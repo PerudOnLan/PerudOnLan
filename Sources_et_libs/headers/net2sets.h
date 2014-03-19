@@ -26,8 +26,8 @@
     Bob@Pendleton.com
 */
 
-#include "SDL.h"
-#include "SDL_net.h"
+#include "SDL/SDL.h"
+#include "SDL/SDL_net.h"
 
 #ifdef __cplusplus
 extern "C" {
