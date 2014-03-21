@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include <unistd.h>
 #include "SDLUtils.h"
 #include "fastevents.h"
 

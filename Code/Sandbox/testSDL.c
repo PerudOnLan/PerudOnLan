@@ -2,6 +2,12 @@
 
 int main(int argc, char *argv[])
 {
+    //initialisation de la randomisation
+    printf("\nrandom pliz ? \n");
+    int seed = 0;
+    scanf("%d",&seed);
+    srandom(seed);
+    //init SDL
     mySDLInitOrQuit(SDL_INIT_EVENTTHREAD | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE);
     SDL_Surface *fond=NULL;
     SDL_Surface *deBleu = NULL;
@@ -22,10 +28,12 @@ int main(int argc, char *argv[])
     positionDeBleu.x = 300;
     positionDeBleu.y = 220;
     SDL_BlitSurface(deBleu,NULL,fond,&positionDeBleu);
-
     SDL_Flip(fond);
+
+    //début du jeu
     jeu(&positionDeBleu, &deBleu, &fond);
 
+    //Quitte la SDL
     SDL_FreeSurface(deBleu);
     SDL_FreeSurface(fond);
     mySDL_Quit();
@@ -37,26 +45,43 @@ int main(int argc, char *argv[])
 
 void jeu(SDL_Rect * pos, SDL_Surface ** img, SDL_Surface ** fond)
 {
+    int score = 0;
   int continuer = 1;
   SDL_Event event;
 
   while (continuer)
     {
-      FE_WaitEvent(&event);
+      FE_PollEvent(&event);
       switch(event.type)
         {
         case SDL_MOUSEBUTTONDOWN:
             if(event.button.button==SDL_BUTTON_LEFT)
             {
-                pos->x = event.button.x;
-                pos->y = event.button.y;
+                if ((((event.button.x) - (pos->x))>0)&&(((event.button.x) - (pos->x))<50)&&(((event.button.y) - (pos->y))>0)&&(((event.button.y) - (pos->y)<57)))
+                {
+                    score ++;
+                    pos->x = random()%590;
+                    pos->y = random()%423;
+                }
+       /*         else
+                {
+                continuer = 0;
+                fprintf(stdout,"\nscore : %d\n",score);
+                }
+        */
             }
         break;
         case SDL_QUIT:
             continuer = 0;
+            fprintf(stdout,"\nscore : %d\n",score);
         break;
         }
     SDL_FillRect(*fond,NULL,pVERT);
+    pos->x += (((random()%21)-10));
+    pos->x = (pos->x)%590;
+    pos->y += (((random()%21)-10));
+    pos->y = (pos->y)%423;
+
     SDL_BlitSurface(*img,NULL,*fond,pos);
     SDL_Flip(*fond);
     }

@@ -12,7 +12,7 @@
 int main(int argc, char **argv)
 {
   SDL_Event ev;
-  char welcome[] = "hello there!-0123456789abcdefghijklmnopqrstuvwxyz";
+  char welcome[] = "Test de connexion PerudOnLan";
   char buf[1024];
   int len = 0;
   int count = 0;
