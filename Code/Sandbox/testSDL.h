@@ -6,6 +6,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <unistd.h>
+#include <time.h>
 #include "SDLUtils.h"
 #include "fastevents.h"
 
@@ -18,7 +19,7 @@
 #define pBLEU SDL_MapRGB((*fond)->format,0,0,200)
 
 void jeu(SDL_Rect * pos,SDL_Surface ** img, SDL_Surface ** fond);
-
+void menu(SDL_Surface ** fond);
 
 
 #endif
