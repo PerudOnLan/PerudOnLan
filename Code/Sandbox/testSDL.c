@@ -3,14 +3,18 @@
 int main(int argc, char *argv[])
 {
     //initialisation de la randomisation
-    printf("\nrandom pliz ? \n");
-    int seed = 0;
-    scanf("%d",&seed);
+    int seed = time(NULL);
     srandom(seed);
     //init SDL
     mySDLInitOrQuit(SDL_INIT_EVENTTHREAD | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE);
+    if(TTF_Init() == -1)
+    {
+        fprintf(stderr, "Erreur d'initialisation de TTF_Init : %s\n",
+        TTF_GetError());
+        exit(EXIT_FAILURE);
+    }
+    //création du fond
     SDL_Surface *fond=NULL;
-
     if ((fond = SDL_SetVideoMode(640,480,32,SDL_DOUBLEBUF))==NULL)
     {
         fprintf(stderr,"Erreur à l'initialisation de la video : %s", SDL_GetError());
@@ -23,6 +27,7 @@ int main(int argc, char *argv[])
     menu(&fond);
         //Quitte la SDL
     SDL_FreeSurface(fond);
+    TTF_Quit();
     mySDL_Quit();
     return EXIT_SUCCESS;
 }
@@ -108,35 +113,59 @@ void menu(SDL_Surface ** fond)
 {
     int continuer = 1;
     SDL_Event event;
-    SDL_Surface *BoutonCreer = NULL;
+    //chargement de la paco-police
+    TTF_Font *policePerudo = NULL;
+    policePerudo = TTF_OpenFont("../../Documents/policePerudo.ttf", 36);
+    SDL_Color couleurNoire = { 0,0,0 } ;
+    SDL_Color couleurRouge = { 200,0,0};
 
-    BoutonCreer = SDL_CreateRGBSurface(SDL_HWSURFACE, 320, 56, 32, 0, 0, 0, 0);
-    SDL_FillRect(BoutonCreer,NULL,pROUGE);
+    SDL_Surface *boutonCreer = NULL;
+
+    boutonCreer = SDL_CreateRGBSurface(SDL_HWSURFACE, 320, 56, 32, 0, 0, 0, 0);
+    SDL_FillRect(boutonCreer,NULL,pROUGE);
     SDL_Rect positionCreer;
     positionCreer.x = 160;
     positionCreer.y = 100;
     printf ("init 1 OK");
-    SDL_BlitSurface(BoutonCreer,NULL,*fond,&positionCreer);
+    SDL_BlitSurface(boutonCreer,NULL,*fond,&positionCreer);
 
-    SDL_Surface *BoutonRejoindre = NULL;
+    SDL_Surface *texteCreer = NULL;
+    texteCreer = TTF_RenderText_Shaded(policePerudo,"CREER", couleurNoire, couleurRouge);
+    positionCreer.x = 320 -(texteCreer->w / 2);
+    positionCreer.y = 128 - (texteCreer->h /2);
+    SDL_BlitSurface(texteCreer, NULL, *fond, &positionCreer);
 
-    BoutonRejoindre = SDL_CreateRGBSurface(SDL_HWSURFACE, 320, 56, 32, 0, 0, 0, 0);
-    SDL_FillRect(BoutonRejoindre,NULL,pROUGE);
+    SDL_Surface *boutonRejoindre = NULL;
+
+    boutonRejoindre = SDL_CreateRGBSurface(SDL_HWSURFACE, 320, 56, 32, 0, 0, 0, 0);
+    SDL_FillRect(boutonRejoindre,NULL,pROUGE);
     SDL_Rect positionRejoindre;
     positionRejoindre.x = 160;
     positionRejoindre.y = 212;
     printf ("init 2 OK");
-    SDL_BlitSurface(BoutonCreer,NULL,*fond,&positionRejoindre);
+    SDL_BlitSurface(boutonRejoindre,NULL,*fond,&positionRejoindre);
 
-    SDL_Surface *BoutonOptions = NULL;
+    SDL_Surface *texteRejoindre = NULL;
+    texteRejoindre = TTF_RenderText_Shaded(policePerudo,"REJOINDRE", couleurNoire, couleurRouge);
+    positionRejoindre.x = 320 -(texteRejoindre->w / 2);
+    positionRejoindre.y = 240 - (texteRejoindre->h /2);
+    SDL_BlitSurface(texteRejoindre, NULL, *fond, &positionRejoindre);
 
-    BoutonOptions = SDL_CreateRGBSurface(SDL_HWSURFACE, 320, 56, 32, 0, 0, 0, 0);
-    SDL_FillRect(BoutonOptions,NULL,pROUGE);
+    SDL_Surface *boutonOptions = NULL;
+
+    boutonOptions = SDL_CreateRGBSurface(SDL_HWSURFACE, 320, 56, 32, 0, 0, 0, 0);
+    SDL_FillRect(boutonOptions,NULL,pROUGE);
     SDL_Rect positionOptions;
     positionOptions.x = 160;
     positionOptions.y = 324;
     printf ("init 2 OK");
-    SDL_BlitSurface(BoutonCreer,NULL,*fond,&positionOptions);
+    SDL_BlitSurface(boutonOptions,NULL,*fond,&positionOptions);
+
+    SDL_Surface *texteOptions = NULL;
+    texteOptions = TTF_RenderText_Shaded(policePerudo,"OPTIONS", couleurNoire, couleurRouge);
+    positionOptions.x = 320 -(texteOptions->w / 2);
+    positionOptions.y = 352 - (texteOptions->h /2);
+    SDL_BlitSurface(texteOptions, NULL, *fond, &positionOptions);
 
     SDL_Flip(*fond);
 
@@ -151,7 +180,9 @@ void menu(SDL_Surface ** fond)
                 case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button==SDL_BUTTON_LEFT)
                 {
-                    if ((((event.button.x) - (positionCreer.x))>0)&&(((event.button.x) - (positionCreer.x))<320)&&(((event.button.y) - (positionCreer.y))>0)&&(((event.button.y) - (positionCreer.y)<56)))
+
+                    if (((event.button.x) > 160)&&((event.button.x) <480)
+                        &&(((event.button.y) > 100)&&((event.button.y)<156)))
                     {
                      //début du jeu
                         SDL_Surface *R1 = NULL;
@@ -167,6 +198,17 @@ void menu(SDL_Surface ** fond)
                         jeu(&posR1, &R1, fond);
                         continuer = 0;
                         SDL_FreeSurface(R1);
+                        TTF_CloseFont(policePerudo);
+                    }
+                    if (((event.button.x) > 160)&&((event.button.x) < 480)
+                        &&(((event.button.y) > 212)&&((event.button.y) <268)))
+                    {
+                        continuer = 0;
+                    }
+                    if (((event.button.x) > 160)&&((event.button.x) < 480)
+                        &&(((event.button.y) > 324)&&((event.button.y) <380)))
+                    {
+                        continuer = 0;
                     }
                 }
                 break;
