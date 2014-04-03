@@ -1,5 +1,5 @@
-#ifndef _TESTSDL_H
-#define _TESTSDL_H
+#ifndef _JEU_H
+#define _JEU_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,7 +11,8 @@
 #include "SDLUtils.h"
 #include "fastevents.h"
 #include "couleurs.h"
-#include "menu.h"
-#include "jeu.h"
+
+
+void jeu(SDL_Rect * pos,SDL_Surface ** img, SDL_Surface ** fond);
 
 #endif

@@ -1,0 +1,12 @@
+#ifndef _COULEUR_H
+#define _COULEUR_H
+
+#define ROUGE SDL_MapRGB(fond->format,200,0,0)
+#define VERT SDL_MapRGB(fond->format,10,180,30)
+#define BLEU SDL_MapRGB(fond->format,0,0,200)
+
+#define pROUGE SDL_MapRGB((*fond)->format,200,0,0)
+#define pVERT SDL_MapRGB((*fond)->format,10,180,30)
+#define pBLEU SDL_MapRGB((*fond)->format,0,0,200)
+
+#endif
