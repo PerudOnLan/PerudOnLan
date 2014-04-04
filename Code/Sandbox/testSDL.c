@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     SDL_FillRect(fond,NULL,VERT);
     SDL_Flip(fond);
     //lancement du menu
-    menu(&fond);
+    menu(fond);
         //Quitte la SDL
     SDL_FreeSurface(fond);
     TTF_Quit();

@@ -4,19 +4,24 @@ SDLLIBS = -lSDLmain -lSDL -lSDL_image -lSDL_ttf -lSDL_net -lSDL_net2
 PHEADERS =../../Sources_et_libs/headers
 PLIBS=../../Sources_et_libs/libs
 
-all: testSDL clean
+all: testSDL doxygen clean
 
-testSDL : testSDL.o menu.o jeu.o
-	$(CC) $(CFLAGS) testSDL.o menu.o jeu.o -L$(PLIBS) $(SDLLIBS) -o TestSDL 
+testSDL : testSDL.o menu.o jeu.o PerudUtils.o
+	$(CC) $(CFLAGS) testSDL.o menu.o jeu.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o TestSDL 
 
-testSDL.o : testSDL.c testSDL.h couleurs.h menu.h jeu.h
+testSDL.o : testSDL.c testSDL.h couleurs.h menu.h jeu.h PerudUtils.h
 	$(CC) $(CFLAGS) -I$(PHEADERS) -c testSDL.c
 
-menu.o : menu.c menu.h couleurs.h jeu.h
+menu.o : menu.c menu.h couleurs.h jeu.h PerudUtils.h
 	$(CC) $(CFLAGS) -I$(PHEADERS) -c menu.c
 
-jeu.o : jeu.c jeu.h couleurs.h
+jeu.o : jeu.c jeu.h couleurs.h PerudUtils.h
 	$(CC) $(CFLAGS) -I$(PHEADERS) -c jeu.c 
+
+PerudUtils.o : PerudUtils.c PerudUtils.h
+	$(CC) $(CFLAGS) -I$(PHEADERS) -c PerudUtils.c
+
+doxygen : #TODO
 
 clean : testSDL
 	rm -f testSDL.o

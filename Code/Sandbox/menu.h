@@ -10,6 +10,6 @@
 #include "fastevents.h"
 #include "couleurs.h"
 
-void menu(SDL_Surface ** fond);
+void menu(SDL_Surface * fond);
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef _JEU_H
-#define _JEU_H
+#ifndef _PERUDUTILS_H
+#define _PERUDUTILS_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,7 +12,8 @@
 #include "fastevents.h"
 #include "couleurs.h"
 
+typedef enum {FAUX, VRAI} Booleen;
 
-void jeu(SDL_Surface * fond);
+Booleen estDans(SDL_Event event, SDL_Surface * rectangle, SDL_Rect pos);
 
 #endif
