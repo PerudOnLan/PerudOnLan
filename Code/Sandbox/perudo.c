@@ -15,10 +15,10 @@ void partie(int nb_de_joueurs) {
     Joueur joueurs[nb_de_joueurs]; /* les joueurs sont representes par un tableau */
     Booleen continuer=VRAI; /* sert a determiner si la partie est toujours en cours */
     int i;
-    for (i=0;i<nb_de_joueurs;i++) {
-        printf("Quel nom voulez-vous utiliser pour le joueur %d ?\n", i+1); /* pas vraiment utile pour l'instant */
-        scanf("%s", &joueurs[i].pseudo);
-        }
+ /*   for (i=0;i<nb_de_joueurs;i++) {
+        printf("Quel nom voulez-vous utiliser pour le joueur %d ?\n", i+1); // pas vraiment utile pour l'instant
+        scanf("%s", (joueurs[i].pseudo));
+        } */
     Booleen premier_tour = VRAI; /* pour l'initialisation */
     while (continuer)  /* la boucle principale, jusqu'a elimination d'un joueur */
         {int i; int j; int k; int tmp; int joueur_actuel; int nb_de_des_max; /* initialisation des variables */
@@ -30,11 +30,11 @@ void partie(int nb_de_joueurs) {
                 joueurs[i].nb_de_des = 5;
             }
         }
-        srand(time(NULL)); /*la seed pour le tirage des des, srandom() sous Linux */
+        srandom(time(NULL)); /*la seed pour le tirage des des, srandom() sous Linux */
         for (i=0;i<nb_de_joueurs;i++) {
             for (k=0;k<6;k++) { joueurs[i].des[k]=0;}  /* tirage des des */
             for (j=0;j<joueurs[i].nb_de_des;j++) {
-                tmp = rand()%6;  /* random() sous Linux */
+                tmp = random()%6;  /* random() sous Linux */
                 for (k=0;k<6;k++) {
                     if (tmp==k) {joueurs[i].des[k]++;} /* on met les valeurs dans un tableau : la premiere case est le nombre de 1, la deuxieme le nombre de 2, etc... */
                 }

@@ -24,13 +24,11 @@ int main(int argc, char *argv[])
         char tampon[10] = "";
         rewind(fconfig);
         fgets(tampon,9,fconfig); //on vide "largeur="
-        printf("%s \n", tampon);
         largeurFenetre = strtol((fgets(tampon,6,fconfig)),NULL,10); // on convertit jusqu'à 4 chiffres en un long
-        printf("%s \n", tampon);
+        printf("%s", tampon);
         fgets(tampon,9,fconfig); //on vide "hauteur="
-        printf("%s \n", tampon);
         hauteurFenetre = strtol((fgets(tampon,6,fconfig)),NULL,10); // on convertit jusqu'à 4 chiffres en un long
-        printf("%s \n", tampon);
+        printf("%s", tampon);
         fclose(fconfig);
         printf("largeur =%ld hauteur=%ld\n", largeurFenetre,hauteurFenetre);
     }
