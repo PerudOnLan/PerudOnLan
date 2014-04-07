@@ -1,3 +1,15 @@
+/**
+* \file jeu.c
+* \brief code du jeu à proprement parler
+* \author Dede
+* \version 0.1
+* \date 06/04
+*
+* Fichier destiné à accueillir la partie "jeu" du projet, c'est à dire la gestion des annonces, l'envoi de messages aux joueurs, et la gestion des callbacks.
+*
+*/
+
+
 #include "jeu.h"
 
 

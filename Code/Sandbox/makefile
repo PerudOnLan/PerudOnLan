@@ -21,7 +21,8 @@ jeu.o : jeu.c jeu.h couleurs.h PerudUtils.h
 PerudUtils.o : PerudUtils.c PerudUtils.h
 	$(CC) $(CFLAGS) -I$(PHEADERS) -c PerudUtils.c
 
-doxygen : #TODO
+doxygen : 
+	doxygen ../../Documents/Doxygen/Doxyfile
 
 clean : testSDL
 	rm -f testSDL.o
