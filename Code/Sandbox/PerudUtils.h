@@ -16,4 +16,8 @@ typedef enum {FAUX, VRAI} Booleen;
 
 Booleen estDans(SDL_Event event, SDL_Surface * rectangle, SDL_Rect pos);
 
+int longueur_mot(char * mot);
+
+void saisie (SDL_Surface * champ, SDL_Rect pos, char * mot, int longueur_max, SDL_Surface * fond);
+
 #endif

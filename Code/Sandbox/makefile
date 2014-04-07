@@ -4,7 +4,7 @@ SDLLIBS = -lSDLmain -lSDL -lSDL_image -lSDL_ttf -lSDL_net -lSDL_net2
 PHEADERS =../../Sources_et_libs/headers
 PLIBS=../../Sources_et_libs/libs
 
-all: testSDL doxygen clean
+all: testSDL clean
 
 testSDL : testSDL.o menu.o jeu.o PerudUtils.o
 	$(CC) $(CFLAGS) testSDL.o menu.o jeu.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o TestSDL 

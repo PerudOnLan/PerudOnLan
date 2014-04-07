@@ -13,5 +13,6 @@
 #include "couleurs.h"
 #include "menu.h"
 #include "jeu.h"
+#include "PerudUtils.h"
 
 #endif

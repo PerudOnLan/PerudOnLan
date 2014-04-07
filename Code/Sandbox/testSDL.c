@@ -29,8 +29,8 @@ int main(int argc, char *argv[])
         fgets(tampon,9,fconfig); //on vide "hauteur="
         hauteurFenetre = strtol((fgets(tampon,6,fconfig)),NULL,10); // on convertit jusqu'à 4 chiffres en un long
         printf("%s", tampon);
-        fclose(fconfig);
         printf("largeur =%ld hauteur=%ld\n", largeurFenetre,hauteurFenetre);
+        fclose(fconfig);
     }
 
     //init SDL

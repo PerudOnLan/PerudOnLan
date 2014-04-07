@@ -1,8 +1,22 @@
+/**
+* \file menu.c
+* \brief code du menu avant le jeu
+* \author Dede
+* \version 0.1
+* \date 06/04
+*
+* Fichier destiné à accueillir la partie "jeu" du projet, c'est à dire la gestion des annonces, l'envoi de messages aux joueurs, et la gestion des callbacks.
+*
+*/
+
 #include "menu.h"
 
 void menu(SDL_Surface * fond)
 {
-    int continuer = 1;
+Booleen quitter = FAUX;
+while(!quitter)
+{
+    Booleen continuer = VRAI;
     SDL_Event event;
     //chargement de la paco-police
     TTF_Font *policePerudo = NULL;
@@ -55,15 +69,26 @@ void menu(SDL_Surface * fond)
     positionOptions.y = (100+(9*((fond->h)-200)/10)) - (texteOptions->h /2);
     SDL_BlitSurface(texteOptions, NULL, fond, &positionOptions);
 
+    SDL_Surface *boutonCheats = NULL;
+
+    boutonCheats = SDL_CreateRGBSurface(SDL_HWSURFACE,100, 100, 32, 0, 0, 0, 0);
+    SDL_FillRect(boutonCheats,NULL,BLEU);
+    SDL_Rect positionCheats;
+    positionCheats.x = 0;
+    positionCheats.y = ((fond->h)-100);
+    SDL_BlitSurface(boutonCheats,NULL,fond,&positionCheats);
+
     SDL_Flip(fond);
 
     while (continuer)
     {
         FE_WaitEvent(&event);
+        char cheat[10];
         switch(event.type)
             {
                 case SDL_QUIT:
-                    continuer = 0;
+                    continuer = FAUX ;
+                    quitter = VRAI;
                 break;
                 case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button==SDL_BUTTON_LEFT)
@@ -73,21 +98,48 @@ void menu(SDL_Surface * fond)
                     {
                      //début du jeu
                         jeu(fond);
-                        continuer = 0;
+                        continuer = FAUX;
+
                     }
                     if (estDans(event,boutonRejoindre,positionRejoindre))
                     {
-                        continuer = 0;
+                        continuer = FAUX;
+                        quitter = VRAI;
+
                     }
                     if  (estDans(event,boutonOptions,positionOptions))
                     {
-                        continuer=0;
+                        continuer=FAUX;
+                        quitter = VRAI;
+                    }
+                     if  (estDans(event,boutonCheats,positionCheats))
+                    {
+                    char saisie[11];
+                    SDL_Surface *champSaisie = NULL;
+
+                    champSaisie = SDL_CreateRGBSurface(SDL_HWSURFACE,300, 50, 32, 0, 0, 0, 0);
+                    SDL_FillRect(champSaisie,NULL,VIOLET);
+                    SDL_Rect positionChamp;
+                    positionChamp.x = 220;
+                    positionChamp.y = 0;
+                    SDL_BlitSurface(champSaisie,NULL,fond,&positionChamp);
+                    SDL_Flip(fond);
+                    saisir(champSaisie,positionChamp, saisie,10,fond);
+                    fprintf(stdout,"%s",saisie);
+
                     }
                 }
                 break;
             }
     }
+ SDL_FreeSurface(boutonCreer);
+ SDL_FreeSurface(texteCreer);
+ SDL_FreeSurface(boutonRejoindre);
+ SDL_FreeSurface(texteRejoindre);
+ SDL_FreeSurface(boutonOptions);
+ SDL_FreeSurface(texteOptions);
  TTF_CloseFont(policePerudo);
+ }
 }
 
 
