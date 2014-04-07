@@ -1,0 +1,13 @@
+Demo du callback + server basique.
+
+Feuille du prof posée sur mon bureau .
+
++++++++++++++++++++++++++++
+
+Infos du prof:
+
+-> echange de données: binaire (préféré) ou texte, à voir. Binaire avantage d'être plus silmple au niveau accès, pas besoin de traiter lignes et espaces...
+-> Faire le schéma/graphique de l'automate: ses différentes phases ainsi que les differents events possibles pdt chacune de ces phases et les réactions. A faire pour client et serveur, deux différents qui interragissent ensemble.
+-> fonction union pour declaration de struct qui en contient une (?)
+-> htons et ntoh, fonctions permettant de gérer les cohérences entre mmachine des suite binaires recues.
+->
