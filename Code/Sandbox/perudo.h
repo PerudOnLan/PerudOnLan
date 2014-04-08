@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
+#include "ia.h"
 
 typedef enum {FAUX, VRAI} Booleen;
 

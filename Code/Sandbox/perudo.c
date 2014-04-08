@@ -80,7 +80,7 @@ void partie(int nb_de_joueurs) {
                 if (annonce.info.mise.de > 0 && annonce.info.mise.nombre > 0 && annonce.info.mise.de <7 && annonce.info.mise.nombre <= nb_de_des_max
                     && ((annonce.info.mise.nombre == annonce_precedente.info.mise.nombre && annonce.info.mise.de > annonce_precedente.info.mise.de && annonce_precedente.info.mise.de != 1)
                     || (annonce.info.mise.nombre > annonce_precedente.info.mise.nombre && annonce.info.mise.de == annonce_precedente.info.mise.de)
-                    || (annonce.info.mise.de == 1 && annonce.info.mise.nombre >= (annonce_precedente.info.mise.nombre+1)/2)
+                    || (annonce.info.mise.de == 1 && annonce.info.mise.nombre >= (annonce_precedente.info.mise.nombre+1)/2 && annonce_precedente.info.mise.de != 1)
                     || (annonce_precedente.info.mise.de == 1 && annonce.info.mise.nombre >= annonce_precedente.info.mise.nombre*2 +1))) /* pleins pleins pleins de conditions */ {
                     annonce_precedente.info.mise.nombre = annonce.info.mise.nombre;
                     annonce_precedente.info.mise.de = annonce.info.mise.de;
@@ -94,7 +94,7 @@ void partie(int nb_de_joueurs) {
             }
             case MENTEUR: {
                 for (i=0;i<nb_de_joueurs;i++) {
-                    somme += joueurs[i].des[annonce_precedente.info.mise.de -1]; /* on calcule pour verifier si il y a mensonge ou pas */
+                    somme += joueurs[i].des[annonce_precedente.info.mise.de -1] + joueurs[i].des[0]; /* on calcule pour verifier si il y a mensonge ou pas */
                 }
                 if (somme<annonce_precedente.info.mise.nombre) {
                     joueurs[(joueur_actuel-1)%nb_de_joueurs].nb_de_des--; /* le joueur qui a fait la derniere annonce perd un de */
@@ -111,10 +111,10 @@ void partie(int nb_de_joueurs) {
             }
             case EXACT: {
                 for (i=0;i<nb_de_joueurs;i++) {
-                    somme += joueurs[i].des[annonce_precedente.info.mise.de -1]; /* pareil que precedemment */
+                    somme += joueurs[i].des[annonce_precedente.info.mise.de -1] + joueurs[i].des[0]; /* pareil que precedemment */
                 }
                 if (somme==annonce_precedente.info.mise.nombre) {
-                    printf("\nGG, y'a que ca qui marche a ce jeu la.\n"); /* on ne le dira jamais assez */
+                    printf("\nGG, y'a que ca qui marche à ce jeu là.\n"); /* on ne le dira jamais assez */
                     if (joueurs[joueur_actuel%nb_de_joueurs].nb_de_des <5) {
                         joueurs[joueur_actuel%nb_de_joueurs].nb_de_des++; /* le joueur regagne un de, si il en avait moins de 5 */
                         nb_de_des_max++; /* ca fait augmenter le nombre de des ! */
