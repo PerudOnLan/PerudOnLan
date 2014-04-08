@@ -101,10 +101,30 @@ void valeurLePlus (int des[6], int *pNombre, int *pValeur, int valeur_precedente
 
 
 
+Joueur creerIa () {
+
+    srand(time(NULL));
+    Joueur iA ;
+    int i;
+    int tmp;
+    for (i=0;i<5;i++) {
+        tmp = random()%6;
+        iA.des[tmp]++;
+    }
+    iA.nb_de_des = 5;
+    return iA;
+}
+
+
+
 
 
 Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
 
+    if (annonce_precedente.type != MISE) {
+        fprintf(stderr, "annonce erronee, on ne peut surrencherir que sur une mise");
+        exit (EXIT_FAILURE);
+    }
     int nb_de_des_max ;
     Joueur iA ;
     int commentProbable = nombreValeurProbable(annonce_precedente.info.mise.de, nb_de_des_max, iA.nb_de_des, iA.des) - annonce_precedente.info.mise.nombre + plusOuMoins(nb_de_des_max) ;
@@ -117,6 +137,50 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
 
         case 3:
         case 2:
+            switch (lancer) {
+                case 1:
+                    annonceIa.info.mise.de = annonce_precedente.info.mise.de;
+                    annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre + 1;
+                case 2:
+                case 3:
+                    valeurLePlus(iA.des, pNombre, pValeur, annonce_precedente.info.mise.de, nb_de_des_max) ;
+                    if (annonce_precedente.info.mise.de != 1 && *pValeur != 1) {    /*cas où mise precedente n'est pas paco, et notre meilleur jeu n'est pas paco.*/
+                        annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre;
+                        annonceIa.info.mise.de = *pValeur;
+                    }
+                    else {
+                        if (annonce_precedente.info.mise.de != 1) {/*cas ou mise precedente pas pacos*/
+                        annonceIa.info.mise.nombre = (1 + annonce_precedente.info.mise.nombre)/2;
+                        annonceIa.info.mise.de = *pValeur;
+                        }
+                        else {  /*cas ou mise precedente paco*/
+                            if (*pValeur == 1) { /*cas ou meilleur jeu pacos*/
+                                annonceIa.info.mise.de = annonce_precedente.info.mise.de;
+                                annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre + 1;
+                            }
+                            else { /*cas ou meilleur jeu pas pacos*/
+                                annonceIa.info.mise.de = *pValeur;
+                                annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre*2 + 1;
+                                }
+                        }
+                    }
+                    break;
+                case 4:
+                     if (iA.des[annonce_precedente.info.mise.de-1] < annonce_precedente.info.mise.nombre) {
+                        annonceIa.info.exact.exact = VRAI;
+                        break;
+                    }
+                    else {
+                        annonceIa.info.mise.nombre = (1 + annonce_precedente.info.mise.nombre)/2;
+                        annonceIa.info.mise.de = 1;
+                        break;
+                    }
+                case 5:
+                    break;
+
+
+
+            }
 
         case 1:
         case 0:
@@ -131,13 +195,25 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
                 case 3:
                 case 4:
                     valeurLePlus(iA.des, pNombre, pValeur, annonce_precedente.info.mise.de, nb_de_des_max) ;
-                    if (*pValeur != 1) {
-                        annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre + 1;
+                    if (annonce_precedente.info.mise.de != 1 && *pValeur != 1) {    /*cas où mise precedente n'est pas paco, et notre meilleur jeu n'est pas paco.*/
+                        annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre;
                         annonceIa.info.mise.de = *pValeur;
                     }
                     else {
+                        if (annonce_precedente.info.mise.de != 1) {/*cas ou mise precedente pas pacos*/
                         annonceIa.info.mise.nombre = (1 + annonce_precedente.info.mise.nombre)/2;
                         annonceIa.info.mise.de = *pValeur;
+                        }
+                        else {  /*cas ou mise precedente paco*/
+                            if (*pValeur == 1) { /*cas ou meilleur jeu pacos*/
+                                annonceIa.info.mise.de = annonce_precedente.info.mise.de;
+                                annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre + 1;
+                            }
+                            else { /*cas ou meilleur jeu pas pacos*/
+                                annonceIa.info.mise.de = *pValeur;
+                                annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre*2 + 1;
+                                }
+                        }
                     }
                     break;
                 case 5:
@@ -152,14 +228,128 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
                     }
             }
 
-        //case -2:
-       // case -3:
+        case -2:
+        case -3:
+            switch (lancer) {
+                case 1:
+                    annonceIa.info.mise.de = annonce_precedente.info.mise.de;
+                    annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre + 1;
+                    return annonceIa;
+                    break;
+                case 2:
+                case 3:
+                    if (iA.des[annonce_precedente.info.mise.de-1] < annonce_precedente.info.mise.nombre) {
+                        annonceIa.info.menteur.menteur = VRAI;
+                        break;
+                    }
+                    else {
+                        annonceIa.info.mise.nombre = (1 + annonce_precedente.info.mise.nombre)/2;
+                        annonceIa.info.mise.de = 1;
+                        break;
+                    }
+                case 4:
+                    valeurLePlus(iA.des, pNombre, pValeur, annonce_precedente.info.mise.de, nb_de_des_max) ;
+                    if (annonce_precedente.info.mise.de != 1 && *pValeur != 1) {    /*cas où mise precedente n'est pas paco, et notre meilleur jeu n'est pas paco.*/
+                        annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre;
+                        annonceIa.info.mise.de = *pValeur;
+                    }
+                    else {
+                        if (annonce_precedente.info.mise.de != 1) {/*cas ou mise precedente pas pacos*/
+                        annonceIa.info.mise.nombre = (1 + annonce_precedente.info.mise.nombre)/2;
+                        annonceIa.info.mise.de = *pValeur;
+                        }
+                        else {  /*cas ou mise precedente paco*/
+                            if (*pValeur == 1) { /*cas ou meilleur jeu pacos*/
+                                annonceIa.info.mise.de = annonce_precedente.info.mise.de;
+                                annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre + 1;
+                            }
+                            else { /*cas ou meilleur jeu pas pacos*/
+                                annonceIa.info.mise.de = *pValeur;
+                                annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre*2 + 1;
+                                }
+                        }
+                    }
+                    break;
+                case 5:
+                    if (iA.des[annonce_precedente.info.mise.de-1] < annonce_precedente.info.mise.nombre) {
+                        annonceIa.info.exact.exact = VRAI;
+                        break;
+                    }
+                    else {
+                        annonceIa.info.mise.nombre = (1 + annonce_precedente.info.mise.nombre)/2;
+                        annonceIa.info.mise.de = 1;
+                        break;
+                    }
+            }
+
 
     }
 
-   // if (commentProbable >= 4) {}
+    if (commentProbable >= 4) {
+        switch(lancer) {
+            case 1:
+            case 2:
+                annonceIa.info.mise.de = annonce_precedente.info.mise.de;
+                annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre + 2;
+                return annonceIa;
+                break;
+            case 3:
+            case 4:
+                valeurLePlus(iA.des, pNombre, pValeur, annonce_precedente.info.mise.de, nb_de_des_max) ;
+                    if (annonce_precedente.info.mise.de != 1 && *pValeur != 1) {    /*cas où mise precedente n'est pas paco, et notre meilleur jeu n'est pas paco.*/
+                        annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre;
+                        annonceIa.info.mise.de = *pValeur;
+                    }
+                    else {
+                        if (annonce_precedente.info.mise.de != 1) {/*cas ou mise precedente pas pacos*/
+                        annonceIa.info.mise.nombre = (1 + annonce_precedente.info.mise.nombre)/2;
+                        annonceIa.info.mise.de = *pValeur;
+                        }
+                        else {  /*cas ou mise precedente paco*/
+                            if (*pValeur == 1) { /*cas ou meilleur jeu pacos*/
+                                annonceIa.info.mise.de = annonce_precedente.info.mise.de;
+                                annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre + 1;
+                            }
+                            else { /*cas ou meilleur jeu pas pacos*/
+                                annonceIa.info.mise.de = *pValeur;
+                                annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre*2 + 1;
+                                }
+                        }
+                    }
+                    break;
+                case 5:
+                    annonceIa.info.mise.de = 1; /*on veut continuer sur les pacos de manière effrontee!!*/
+                    if (annonce_precedente.info.mise.de == 1) {
+                        annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre +2 ;
+                    }
+                    else {
+                        annonceIa.info.mise.nombre = (1 + annonce_precedente.info.mise.nombre)/2 + 1;
+                    }
+        }
+    }
 
-  //  if (commentProbable <= -4) {}
+    if (commentProbable <= -4) {
+        switch (lancer) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                if (iA.des[annonce_precedente.info.mise.de-1] < annonce_precedente.info.mise.nombre) {
+                        annonceIa.info.menteur.menteur = VRAI;
+                        break;
+                    }
+                    else {
+                        annonceIa.info.mise.nombre = (1 + annonce_precedente.info.mise.nombre)/2;
+                        annonceIa.info.mise.de = 1;
+                        break;
+                    }
+            case 5:
+                annonceIa.info.mise.de = annonce_precedente.info.mise.de;
+                annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre + 1;
+                return annonceIa;
+                break;
+        }
+    }
 }
 
 
