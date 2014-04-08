@@ -16,7 +16,7 @@
 void klik(SDL_Surface * fond)
 {
     TTF_Font *policePerudo = NULL;
-    policePerudo = TTF_OpenFont("../../Documents/policePerudo.ttf", ((fond->w)/15));
+    policePerudo = TTF_OpenFont("../../Documents/ARCADECLASSIC.TTF", ((fond->w)/15));
     SDL_Color couleurNoire = { 0,0,0 } ;
     SDL_Color couleurVerte = { 10,180,30};
     SDL_Surface *R1 = NULL, *R2 = NULL, *R3 = NULL, *R4 = NULL, *R5 = NULL, *R6 = NULL;
@@ -76,21 +76,22 @@ void klik(SDL_Surface * fond)
     posR6.y = ((fond->h)/2)+200;
     SDL_BlitSurface(R6,NULL,fond,&posR6);
 
-    //init du timer
+
+    long timerDebut = SDL_GetTicks();
+    long timerActuel = timerDebut;
+    char tempsRestant[] = "60";
+    int indice = 0;
+    int score = 0;
+
+      //init du timer
     SDL_Surface *texteTimer = NULL;
-    texteTimer = TTF_RenderText_Shaded(policePerudo,"60", couleurNoire, couleurVerte);
+    texteTimer = TTF_RenderText_Solid(policePerudo,tempsRestant, couleurNoire);
     SDL_Rect positionTimer;
-    positionTimer.x = ((fond->w) -(texteTimer->w) -100);
+    positionTimer.x = ((fond->w) -(texteTimer->w) -10);
     positionTimer.y = 10;
 
     SDL_BlitSurface(texteTimer, NULL, fond, &positionTimer);
     SDL_Flip(fond);
-
-    long timerDebut = SDL_GetTicks();
-    long timerActuel = timerDebut;
-    char tempsRestant[2] = "60";
-    int indice = 0;
-    int score = 0;
 
     Booleen continuer = VRAI;
     SDL_Event event;
@@ -186,14 +187,16 @@ void klik(SDL_Surface * fond)
         SDL_Delay(20);
         timerActuel = SDL_GetTicks();
 
-        tempsRestant[0]=(6-((timerActuel-timerDebut)/10000))+'0'; //les dizaines du timer
-        tempsRestant[1]=(10-(((timerActuel-timerDebut)/1000))%10)+'0'; //les unités du timer
+        tempsRestant[0]=(5-((timerActuel-timerDebut)/10000))+'0'; //les dizaines du timer
+        tempsRestant[1]=(9-(((timerActuel-timerDebut)/1000))%10)+'0'; //les unités du timer
 
-        texteTimer = TTF_RenderText_Shaded(policePerudo,tempsRestant, couleurNoire, couleurVerte);
+        texteTimer = TTF_RenderText_Solid(policePerudo,tempsRestant, couleurNoire);
         SDL_BlitSurface(texteTimer, NULL, fond, &positionTimer);
         SDL_Flip(fond);
 
     }
+    SDL_FillRect(fond,NULL,VERT);
+    SDL_Flip(fond);
     fprintf(stdout,"\nscore : %d\n",score);
     SDL_FreeSurface(R1);
     SDL_FreeSurface(R2);
@@ -201,4 +204,5 @@ void klik(SDL_Surface * fond)
     SDL_FreeSurface(R4);
     SDL_FreeSurface(R5);
     SDL_FreeSurface(R6);
+    SDL_FreeSurface(texteTimer);
 }

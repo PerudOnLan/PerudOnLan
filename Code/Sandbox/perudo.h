@@ -18,12 +18,8 @@ typedef struct {
         int nombre;
         int de;
     } mise;
-    struct {
         Booleen menteur;
-    } menteur;
-    struct {
         Booleen exact;
-    } exact;
     } info;
 } Annonce;
 

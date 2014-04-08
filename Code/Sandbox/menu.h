@@ -11,6 +11,7 @@
 #include "fastevents.h"
 #include "couleurs.h"
 #include "PerudUtils.h"
+#include "jeu.h"
 
 void menu(SDL_Surface * fond);
 
