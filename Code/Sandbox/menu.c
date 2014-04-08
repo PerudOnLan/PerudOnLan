@@ -71,11 +71,11 @@ while(!quitter)
 
     SDL_Surface *boutonCheats = NULL;
 
-    boutonCheats = SDL_CreateRGBSurface(SDL_HWSURFACE,100, 100, 32, 0, 0, 0, 0);
-    SDL_FillRect(boutonCheats,NULL,BLEU);
+    boutonCheats = SDL_CreateRGBSurface(SDL_HWSURFACE,10, 10, 32, 0, 0, 0, 0);
+    SDL_FillRect(boutonCheats,NULL,VERT);
     SDL_Rect positionCheats;
     positionCheats.x = 0;
-    positionCheats.y = ((fond->h)-100);
+    positionCheats.y = ((fond->h)-10);
     SDL_BlitSurface(boutonCheats,NULL,fond,&positionCheats);
 
     SDL_Flip(fond);
@@ -97,7 +97,7 @@ while(!quitter)
                     if (estDans(event,boutonCreer,positionCreer))
                     {
                      //début du jeu
-                        jeu(fond);
+                        klik(fond);
                         continuer = FAUX;
 
                     }
@@ -114,19 +114,25 @@ while(!quitter)
                     }
                      if  (estDans(event,boutonCheats,positionCheats))
                     {
-                    char saisie[11];
+                    char saisie[11]= "          ";
                     SDL_Surface *champSaisie = NULL;
-
-                    champSaisie = SDL_CreateRGBSurface(SDL_HWSURFACE,300, 50, 32, 0, 0, 0, 0);
+                    champSaisie = SDL_CreateRGBSurface(SDL_HWSURFACE,320, 50, 32, 0, 0, 0, 0);
                     SDL_FillRect(champSaisie,NULL,VIOLET);
                     SDL_Rect positionChamp;
-                    positionChamp.x = 220;
+                    positionChamp.x = 0;
                     positionChamp.y = 0;
                     SDL_BlitSurface(champSaisie,NULL,fond,&positionChamp);
                     SDL_Flip(fond);
                     saisir(champSaisie,positionChamp, saisie,10,fond);
-                    fprintf(stdout,"%s",saisie);
-
+                    if(strcasecmp(saisie,"KLIKLEPACO")==0)
+                        {
+                        klik(fond);
+                        }
+                    SDL_FillRect(champSaisie,NULL,VERT);
+                    SDL_BlitSurface(champSaisie,NULL,fond,&positionChamp);
+                    SDL_Flip(fond);
+                    SDL_FreeSurface(champSaisie);
+                    continuer =FAUX;
                     }
                 }
                 break;
@@ -138,6 +144,7 @@ while(!quitter)
  SDL_FreeSurface(texteRejoindre);
  SDL_FreeSurface(boutonOptions);
  SDL_FreeSurface(texteOptions);
+ SDL_FreeSurface(boutonCheats);
  TTF_CloseFont(policePerudo);
  }
 }

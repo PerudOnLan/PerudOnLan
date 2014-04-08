@@ -11,7 +11,7 @@
 #include "SDLUtils.h"
 #include "fastevents.h"
 #include "couleurs.h"
-
+#include "PerudUtils.h"
 
 void jeu(SDL_Surface * fond);
 

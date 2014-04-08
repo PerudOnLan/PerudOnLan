@@ -13,8 +13,12 @@
 #include "jeu.h"
 
 
-void jeu(SDL_Surface * fond)
+void klik(SDL_Surface * fond)
 {
+    TTF_Font *policePerudo = NULL;
+    policePerudo = TTF_OpenFont("../../Documents/policePerudo.ttf", ((fond->w)/15));
+    SDL_Color couleurNoire = { 0,0,0 } ;
+    SDL_Color couleurVerte = { 10,180,30};
     SDL_Surface *R1 = NULL, *R2 = NULL, *R3 = NULL, *R4 = NULL, *R5 = NULL, *R6 = NULL;
     SDL_Rect posR1, posR2, posR3, posR4, posR5, posR6;
 
@@ -72,11 +76,23 @@ void jeu(SDL_Surface * fond)
     posR6.y = ((fond->h)/2)+200;
     SDL_BlitSurface(R6,NULL,fond,&posR6);
 
+    //init du timer
+    SDL_Surface *texteTimer = NULL;
+    texteTimer = TTF_RenderText_Shaded(policePerudo,"60", couleurNoire, couleurVerte);
+    SDL_Rect positionTimer;
+    positionTimer.x = ((fond->w) -(texteTimer->w) -100);
+    positionTimer.y = 10;
+
+    SDL_BlitSurface(texteTimer, NULL, fond, &positionTimer);
+    SDL_Flip(fond);
+
     long timerDebut = SDL_GetTicks();
     long timerActuel = timerDebut;
+    char tempsRestant[2] = "60";
     int indice = 0;
     int score = 0;
-    int continuer = 1;
+
+    Booleen continuer = VRAI;
     SDL_Event event;
     while (continuer && ((timerActuel-timerDebut)<60000))
     {
@@ -113,11 +129,14 @@ void jeu(SDL_Surface * fond)
                 }
                 break;
                 case SDL_QUIT:
-                    continuer = 0;
+                    continuer = FAUX;
                 break;
                 case SDL_KEYDOWN:
                     switch(event.key.keysym.sym)
                     {
+                        case SDLK_ESCAPE:
+                        continuer =FAUX;
+                        break;
                         case SDLK_UP:
                         break;
                         case SDLK_DOWN:
@@ -164,11 +183,22 @@ void jeu(SDL_Surface * fond)
         SDL_BlitSurface(R4,NULL,fond,&posR4);
         SDL_BlitSurface(R5,NULL,fond,&posR5);
         SDL_BlitSurface(R6,NULL,fond,&posR6);
-        SDL_Flip(fond);
         SDL_Delay(20);
         timerActuel = SDL_GetTicks();
-        fprintf(stdout,"%ld\n",(timerActuel-timerDebut));
+
+        tempsRestant[0]=(6-((timerActuel-timerDebut)/10000))+'0'; //les dizaines du timer
+        tempsRestant[1]=(10-(((timerActuel-timerDebut)/1000))%10)+'0'; //les unités du timer
+
+        texteTimer = TTF_RenderText_Shaded(policePerudo,tempsRestant, couleurNoire, couleurVerte);
+        SDL_BlitSurface(texteTimer, NULL, fond, &positionTimer);
+        SDL_Flip(fond);
+
     }
     fprintf(stdout,"\nscore : %d\n",score);
     SDL_FreeSurface(R1);
+    SDL_FreeSurface(R2);
+    SDL_FreeSurface(R3);
+    SDL_FreeSurface(R4);
+    SDL_FreeSurface(R5);
+    SDL_FreeSurface(R6);
 }

@@ -18,6 +18,6 @@ Booleen estDans(SDL_Event event, SDL_Surface * rectangle, SDL_Rect pos);
 
 int longueur_mot(char * mot);
 
-void saisie (SDL_Surface * champ, SDL_Rect pos, char * mot, int longueur_max, SDL_Surface * fond);
+void saisir (SDL_Surface * champ, SDL_Rect pos, char * mot, int longueur_max, SDL_Surface * fond);
 
 #endif

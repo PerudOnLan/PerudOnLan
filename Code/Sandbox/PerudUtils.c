@@ -77,6 +77,7 @@ void saisir (SDL_Surface * champ, SDL_Rect pos, char * mot, int longueur_max, SD
 
         while (continuer)
         {
+            SDL_EnableKeyRepeat(500,50);
             FE_WaitEvent(&event);
             switch(event.type)
             {
@@ -130,5 +131,7 @@ void saisir (SDL_Surface * champ, SDL_Rect pos, char * mot, int longueur_max, SD
                 break;
             }
         }
+        SDL_FreeSurface(texteEntre);
+        TTF_CloseFont(policePerudo);
     }
 
