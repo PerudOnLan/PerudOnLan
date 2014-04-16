@@ -1,3 +1,11 @@
+/**
+* \file menu.h
+* \brief code du menu avant le jeu
+* \author Dede
+* \version 0.2
+* \date 09/04
+*/
+
 #ifndef _MENU_H
 #define _MENU_H
 

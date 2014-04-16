@@ -1,10 +1,26 @@
-#include "PerudUtils.h"
 /**
-* \brief raccourci pour voir si un bouton est cliqué
-* \param SDL_Event event, SDL_Surface * rectangle, SDL_Rect pos
-* \return Booleen
+* \file PerudUtils.c
+* \brief Fonctions utiles pour le projet
 * \author Dede
-* \date 07/04
+* \version 0.2
+* \date 09/04
+*
+* Diverses fonctions, majoritairement liées à la SDL, afin de nous simplifier la vie
+*
+*/
+
+
+#include "PerudUtils.h"
+
+/**
+* \fn Booleen estDans (SDL_Event event, SDL_Surface * rectangle, SDL_Rect pos)
+* \brief raccourci pour voir si un bouton est cliqué
+* \param event l'évènement qui vient de se produire
+* \param rectangle le rectangle dans lequel on teste la présence de l'évènement
+* \param pos la position du coin en haut à gauche du rectangle
+* \return Booleen - VRAI si l'évènement a eu lieu dans rectangle, FAUX sinon
+* \author Dede
+* \date 16/04
 */
 Booleen estDans (SDL_Event event, SDL_Surface * rectangle, SDL_Rect pos)
 {
@@ -45,28 +61,52 @@ Booleen estDans (SDL_Event event, SDL_Surface * rectangle, SDL_Rect pos)
             }
 }
 
+
+/**
+* \fn int longueur_mot(char * mot)
+* \brief Longueur d'un mot
+* \param mot La chaîne de caractères dont on veut évaluer la longueur
+* \return -1 si mot ne contient pas \0 et n'est donc pas un vrai mot, sa longueur sinon
+* \author Dede
+* \date 16/04
+*/
 int longueur_mot(char * mot)
     {
         int i = 0;
-        while (mot[i] != '\0')
+        while (mot[i] != '\0' && i<TAILLE_MAX)
         {
             i++;
         }
+        if (i<TAILLE_MAX)
         return i;
+        else
+        {
+        fprintf(stderr,"l'objet %s n'est pas un mot valable", mot);
+        return (-1);
+        }
     }
 
 
-void saisir (SDL_Surface * champ, SDL_Rect pos, char * mot, int longueur_max, SDL_Surface * fond)
+/**
+* \fn void saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * police, SDL_Color couleurPolice, SDL_Color couleurFond, char * mot, int longueur_max, SDL_Surface * fond)
+* \brief Permet de saisir du texte en interface graphique
+* \param champ La surface de saisie
+* \param pos La position du coin supérieur gauche de la surface de saisie
+* \param couleurChamp La couleur du champ de saisie, format SDLMapRGB
+* \param police Police de caractère utilisée pour la saisie
+* \param couleurPolice La couleur de la police de saisie
+* \param couleurFond couleur de fond de la saisie. Identique visuellement à la couleurChamp, mais au format SDL_Color
+* \param mot La chaine de caractère à remplir
+* \param longueur_max la longueur maximale de la saisie
+* \param fond La surface qui sert de fond, comme dans tous les programmes qui ont besoin d'affichage
+* \author Dede
+* \date 16/04
+*/
+void saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * police, SDL_Color couleurPolice, SDL_Color couleurFond, char * mot, int longueur_max, SDL_Surface * fond)
     {
         int longueur = 0;
         Booleen continuer = VRAI;
         SDL_Event event;
-        // on définit la police et les oculeurs de police
-        TTF_Font *policePerudo = NULL;
-        policePerudo = TTF_OpenFont("../../Documents/policePerudo.ttf", 30);
-        SDL_Color couleurBlanche = {255,255,255} ;
-        SDL_Color couleurViolette = {150,0,150};
-
         //on définit ce qui est écrit
         SDL_Surface *texteEntre = NULL;
 
@@ -75,7 +115,8 @@ void saisir (SDL_Surface * champ, SDL_Rect pos, char * mot, int longueur_max, SD
         positionEntre.x = (pos.x) + ((champ->w)/20);
         positionEntre.y = (pos.y) + ((champ->h)/10);
 
-        while (continuer)
+        //boucle principale, tant que rien n'a été saisie
+        while (continuer||longueur==0)
         {
             SDL_EnableKeyRepeat(500,50);
             FE_WaitEvent(&event);
@@ -87,51 +128,57 @@ void saisir (SDL_Surface * champ, SDL_Rect pos, char * mot, int longueur_max, SD
                 case SDL_KEYDOWN:
                     switch(event.key.keysym.sym)
                     {
-                        case SDLK_ESCAPE:
-                            continuer = FAUX;
+                        case SDLK_ESCAPE:   //on force la sortie
+                          continuer = FAUX;
+                          if (longueur==0)
+                            longueur =1;
                         break;
-                        case SDLK_DELETE:
+                        case SDLK_DELETE:   //on supprime le caractère précédent
                             if (longueur > 0)
                             longueur --;
                             mot[longueur]='\0';
                         break;
-                        case SDLK_BACKSPACE:
+                        case SDLK_BACKSPACE:   //on supprime le caractère précédent de même
                             if (longueur > 0)
                             longueur --;
                             mot[longueur]='\0';
                         break;
-                        case SDLK_RETURN:
+                        case SDLK_RETURN:      //on valide la saisie
                             mot[longueur]='\0';
                             continuer = FAUX;
+                            //on dégage le \n au casoù il ne serait pas consommé
                         break;
-                        case SDLK_SPACE:
+                        case SDLK_SPACE:       //l'espace ne sert à rien
                         break;
                         default:
                         break;
                     }
-                    if (longueur < longueur_max)
+                    if (longueur < longueur_max)    //si on a encore de la place dans le mot
                     {
-                        SDL_EnableUNICODE(SDL_ENABLE);
+                        SDL_EnableUNICODE(SDL_ENABLE);  //on transforme la saisie en caractère si elle est présente en ASCII
                         if ((event.key.keysym.unicode >= (Uint16)33) && (event.key.keysym.unicode <= (Uint16)122))
                         {
                             mot[longueur]=(char)event.key.keysym.unicode;
                             longueur ++;
                         }
                     }
-                SDL_FillRect(champ,NULL,VIOLET);
+                    //On réaffiche le nouveau texte
+                SDL_FillRect(champ,NULL,couleurChamp);
                 SDL_BlitSurface(champ, NULL, fond, &pos);
                 SDL_Flip(fond);
-                texteEntre = TTF_RenderText_Shaded(policePerudo,mot,couleurBlanche, couleurViolette);
+                texteEntre = TTF_RenderText_Shaded(police,mot,couleurPolice, couleurFond);
                 SDL_BlitSurface(texteEntre, NULL, fond, &positionEntre);
                 SDL_Flip(fond);
+                /* Ca c'est du debug
                 printf("%d\n", longueur);
                 printf("%s\n", mot);
+                */
                 break;
                 default:
                 break;
             }
         }
+        //on n'oublie pas de free à la fin
         SDL_FreeSurface(texteEntre);
-        TTF_CloseFont(policePerudo);
     }
 

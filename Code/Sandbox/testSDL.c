@@ -52,8 +52,39 @@ int main(int argc, char *argv[])
     SDL_FillRect(fond,NULL,VERT);
     SDL_Flip(fond);
     //lancement du menu
-    menu(fond);
+    TTF_Font *policePerudo = NULL;
+    policePerudo = TTF_OpenFont("../../Documents/policePerudo.ttf", ((fond->w)/15));
+    SDL_Color couleurNoire = { 0,0,0 } ;
+    SDL_Color couleurRouge = { 200,0,0};
+
+       // on définit la police et les couleurs de police de saisie
+    TTF_Font *policeSaisie = NULL;
+    policeSaisie = TTF_OpenFont("../../Documents/arcadeclassic.ttf", 30);
+    SDL_Color couleurBlanche = {255,255,255} ;
+    SDL_Color couleurViolette = {150,0,150};
+
+    SDL_Rect positionCreer;
+    positionCreer.x = 0;
+    positionCreer.y = 0;
+
+    SDL_Surface *texteTest = NULL;
+    texteTest = TTF_RenderText_Shaded(policePerudo,"TEST", couleurNoire, couleurRouge);
+    positionCreer.x = 300;
+    positionCreer.y = 200;
+    SDL_BlitSurface(texteTest, NULL, fond, &positionCreer);
+
+        SDL_Surface *texteEssai = NULL;
+    texteEssai = TTF_RenderText_Shaded(policeSaisie,"ESSAI", couleurBlanche, couleurViolette);
+    positionCreer.x = 300;
+    positionCreer.y = 280;
+    SDL_BlitSurface(texteEssai, NULL, fond, &positionCreer);
+
+    SDL_Flip(fond);
         //Quitte la SDL
+    SDL_FreeSurface(texteTest);
+    SDL_FreeSurface(texteEssai);
+    TTF_CloseFont(policePerudo);
+    TTF_CloseFont(policeSaisie);
     SDL_FreeSurface(fond);
     TTF_Quit();
     mySDL_Quit();

@@ -1,3 +1,10 @@
+/**
+* \file jeu.h
+* \brief code du jeu à proprement parler
+* \author François,Dede
+* \version 0.2
+* \date 09/04
+*/
 #ifndef _JEU_H
 #define _JEU_H
 
@@ -13,6 +20,28 @@
 #include "couleurs.h"
 #include "PerudUtils.h"
 
-void jeu(SDL_Surface * fond);
+typedef enum {MISE, MENTEUR, EXACT} Type;
+
+typedef struct {
+    Type type;
+    union {
+    struct {
+        int nombre;
+        int de;
+    } mise;
+        Booleen menteur;
+        Booleen exact;
+    } info;
+} Annonce;
+
+typedef struct {
+    char pseudo[TAILLE_MAX+1];
+    int des[6];
+    int nb_de_des;
+} Joueur;
+
+void partie (SDL_Surface * fond);
+
+void klik(SDL_Surface * fond);
 
 #endif
