@@ -1,16 +1,16 @@
 CC = gcc
-CFLAGS = -g
+CFLAGS = -m32 -g
 SDLLIBS = -lSDLmain -lSDL -lSDL_image -lSDL_ttf -lSDL_net -lSDL_net2
 PHEADERS =../../Sources_et_libs/headers
 PLIBS=../../Sources_et_libs/libs
 
-all: testSDL doxygen clean
+all: Perudo clean
 
-testSDL : testSDL.o menu.o jeu.o PerudUtils.o
-	$(CC) $(CFLAGS) testSDL.o menu.o jeu.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o TestSDL 
+Perudo : perudo.o menu.o jeu.o PerudUtils.o 
+	$(CC) $(CFLAGS) perudo.o menu.o jeu.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o Perudo
 
-testSDL.o : testSDL.c testSDL.h couleurs.h menu.h jeu.h PerudUtils.h
-	$(CC) $(CFLAGS) -I$(PHEADERS) -c testSDL.c
+perudo.o : perudo.c perudo.h couleurs.h menu.h jeu.h PerudUtils.h
+	$(CC) $(CFLAGS) -I$(PHEADERS) -c perudo.c
 
 menu.o : menu.c menu.h couleurs.h jeu.h PerudUtils.h
 	$(CC) $(CFLAGS) -I$(PHEADERS) -c menu.c
@@ -24,5 +24,5 @@ PerudUtils.o : PerudUtils.c PerudUtils.h
 doxygen : 
 	doxygen ../../Documents/Doxygen/Doxyfile
 
-clean : testSDL
-	rm -f testSDL.o
+clean : Perudo
+	rm -f perudo.o menu.o jeu.o PerudUtils.o

@@ -12,6 +12,5 @@
 #include "fastevents.h"
 #include "couleurs.h"
 #include "menu.h"
-#include "jeu.h"
 
 #endif

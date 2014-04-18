@@ -29,4 +29,9 @@
 */
 #define JAUNE SDL_MapRGB(fond->format,210,220,0)
 
+/** \def VIOLET
+* \brief couleur violette
+*/
+#define VIOLET SDL_MapRGB(fond->format,150,0,150)
+
 #endif
