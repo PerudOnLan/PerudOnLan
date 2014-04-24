@@ -143,9 +143,12 @@ void saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * 
                             longueur --;
                             mot[longueur]='\0';
                         break;
-                        case SDLK_RETURN:      //on valide la saisie
-                            mot[longueur]='\0';
-                            continuer = FAUX;
+                        case SDLK_RETURN:      //on valide la saisie, uniquement si la longueur est >0
+                            if(longueur>0)
+                            {
+                                mot[longueur]='\0';
+                                continuer = FAUX;
+                            }
                             //on dégage le \n au casoù il ne serait pas consommé
                         break;
                         case SDLK_SPACE:       //l'espace ne sert à rien

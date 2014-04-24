@@ -19,6 +19,7 @@ int main(int argc, char **argv)
   int s = -1;
   int next[0xffff];
   int n = -1;
+  IPaddress *monIP = NULL;
 
   memset(next, 0, sizeof(next));
 
@@ -26,8 +27,13 @@ int main(int argc, char **argv)
                   SDL_INIT_VIDEO | 
                   SDL_INIT_NOPARACHUTE);
 
-  NET2_TCPAcceptOn(6666);
+  if((NET2_ResolveHost(monIP,"localhost",6666))!=0 || monIP==NULL)
+    {
+      fprintf(stderr,"errreur à la récupération de l'IP");
+      return EXIT_FAILURE;
+    }
 
+  NET2_TCPAcceptOn(monIP->port);
   while (FE_WaitEvent(&ev))
   {
     switch (ev.type)

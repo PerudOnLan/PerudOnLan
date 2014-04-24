@@ -22,5 +22,6 @@
 #include "jeu.h"
 
 void menu(SDL_Surface * fond);
+void options(SDL_Surface * fond, int resolution);
 
 #endif

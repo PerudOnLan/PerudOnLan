@@ -12,7 +12,13 @@
 
 #include "jeu.h"
 
-
+/**
+* \fn void partie(SDL_Surface * fond)
+* \brief Code de ce qu'il se passe en jeu
+* \param fond le fond d'écran sur lequel s'affiche les choses
+* \author François
+* \date 12/04
+*/
 void partie(SDL_Surface * fond) {
     //On remet le fond uniforme
     SDL_FillRect(fond,NULL,VERT);
@@ -217,8 +223,13 @@ void partie(SDL_Surface * fond) {
 
 
 
-
-
+/**
+* \fn void klik(SDL_Surface * fond)
+* \brief Code d'un mini-jeu
+* \param fond le fond d'écran sur lequel s'affiche les choses
+* \author Dede
+* \date 5/04
+*/
 
 void klik(SDL_Surface * fond)
 {

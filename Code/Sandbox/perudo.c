@@ -14,6 +14,7 @@
 
 int main() {
     //on initialise les paramètres au cas où on ne puisse les lire
+    int resolution = 0;
     long hauteurFenetre = 480;
     long largeurFenetre = 640;
     // loading de la config perso
@@ -32,6 +33,7 @@ int main() {
     {
         char tampon[10] = "";
         rewind(fconfig);
+       /* fgets(tampon,7,fconfig); // On vide "res=x"
         fgets(tampon,9,fconfig); //on vide "largeur="
         largeurFenetre = strtol((fgets(tampon,6,fconfig)),NULL,10); // on convertit jusqu'a 4 chiffres en un long
         printf("%s", tampon);
@@ -39,7 +41,25 @@ int main() {
         hauteurFenetre = strtol((fgets(tampon,6,fconfig)),NULL,10); // on convertit jusqu'a 4 chiffres en un long
         printf("%s", tampon);
         printf("largeur =%ld hauteur=%ld\n", largeurFenetre,hauteurFenetre);
-        fclose(fconfig);
+        fclose(fconfig); */
+        fgets(tampon,5,fconfig); //on vide "res="
+        resolution = strtol((fgets(tampon,2,fconfig)),NULL,10);
+        switch(resolution)
+            {
+                case 0:
+                hauteurFenetre = 480;
+                largeurFenetre = 640;
+                break;
+                case 1:
+                hauteurFenetre = 600;
+                largeurFenetre = 800;
+                break;
+                case 2:
+                hauteurFenetre = 1280;
+                largeurFenetre = 960;
+                break;
+            }
+        printf ("resolution : %d\n", resolution);
     }
 
     //init SDL
