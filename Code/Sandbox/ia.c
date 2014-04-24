@@ -139,13 +139,15 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
         case 2:
             switch (lancer) {
                 case 1:
+                case 2:
                     annonceIa.info.mise.de = annonce_precedente.info.mise.de;
                     annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre + 1;
-                case 2:
+                    break;
                 case 3:
+                case 4:
                     valeurLePlus(iA.des, pNombre, pValeur, annonce_precedente.info.mise.de, nb_de_des_max) ;
                     if (annonce_precedente.info.mise.de != 1 && *pValeur != 1) {    /*cas où mise precedente n'est pas paco, et notre meilleur jeu n'est pas paco.*/
-                        annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre;
+                        annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre; /* on part sur notre valeur la plus probable (si supérieure à la pcédente, géré dans valeurLePlus */
                         annonceIa.info.mise.de = *pValeur;
                     }
                     else {
@@ -165,7 +167,7 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
                         }
                     }
                     break;
-                case 4:
+                case 5:
                      if (iA.des[annonce_precedente.info.mise.de-1] < annonce_precedente.info.mise.nombre) {
                         annonceIa.info.exact.exact = VRAI;
                         break;
@@ -175,10 +177,6 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
                         annonceIa.info.mise.de = 1;
                         break;
                     }
-                case 5:
-                    break;
-
-
 
             }
 
@@ -325,6 +323,7 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
                     else {
                         annonceIa.info.mise.nombre = (1 + annonce_precedente.info.mise.nombre)/2 + 1;
                     }
+                    break;
         }
     }
 
