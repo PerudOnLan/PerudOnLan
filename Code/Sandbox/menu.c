@@ -199,10 +199,35 @@ while(!quitter)
  }
 }
 
-void options(SDL_Surface * fond, int resolution)
+/** \fn void options(SDL_Surface *fond)
+* \param fond Le fond d'écran pour affichage
+* \brief Le sous-menu d'options
+*
+* Ce sous-menu permet de paramétrer plusieurs options du jeu, en passant par le fichier config; comme la résolution ou la couleur de ses dés
+*
+*/
+
+void options(SDL_Surface * fond)
 {
-    Booleen continuer = VRAI;
+    int resolution = 0;
+
+ /*façon alternative de récupérer la résolution actuelle
+    //On récupère la résolution actuelle
+    switch (fond->h)
+    {
+        case 600:
+        resolution = 1;
+        break;
+
+        case 960:
+        resolution = 2;
+        break;
+    }
+*/
+
+    Booleen continuer = VRAI, affichageChange;
     SDL_Event event;
+
     // on ouvre le fichier de config
      FILE* fconfig = NULL;
     if ((fconfig = fopen("config.ini","r+"))==NULL)
@@ -214,9 +239,8 @@ void options(SDL_Surface * fond, int resolution)
     {
         char tampon[10] = "";
         rewind(fconfig);
-        fgets(tampon,5,fconfig); // On vide "res=x"
-        resolution = strtol((fgets(tampon,6,fconfig)),NULL,10); // on convertit jusqu'a 4 chiffres en un long
-        fclose(fconfig);
+        fgets(tampon,5,fconfig); // On vide "res="
+        resolution = strtol((fgets(tampon,2,fconfig)),NULL,10); // on convertit le char en long
     }
     //On remet le fond uniforme
     SDL_FillRect(fond,NULL,VERT);
@@ -232,28 +256,105 @@ void options(SDL_Surface * fond, int resolution)
     }
     SDL_Color couleurNoire = { 0,0,0 } ;
     SDL_Color couleurBlanche = {255,255,255};
-       //Resolutions
-    SDL_Rect positionResolution;
-    positionResolution.x = (fond->w)/6;
-    positionResolution.y = 100;
+
+    //Texte "Résolution"
+    SDL_Rect positionTexte;
+    positionTexte.x = (fond->w)/6;
+    positionTexte.y = 100;
 
     SDL_Surface *texteResolution = NULL;
     texteResolution = TTF_RenderText_Solid(policePerudo,"RESOLUTION", couleurNoire);
-    SDL_BlitSurface(texteResolution, NULL, fond, &positionResolution);
-    printf ("Abwa1\n");
-    // 640*480
-    SDL_Rect position640;
-    position640.x = (fond->w)/6;
-    position640.y = 200 ;//(100+(((fond->h)-200)/10)) - 2*(texte640->h /2);
+    SDL_BlitSurface(texteResolution, NULL, fond, &positionTexte);
 
+    //Texte "Couleur"
+    positionTexte.x = 2*(fond->w)/3;
+    positionTexte.y = 100;
+
+    SDL_Surface *texteCouleur = NULL;
+    texteCouleur = TTF_RenderText_Solid(policePerudo,"COULEUR", couleurNoire);
+    SDL_BlitSurface(texteCouleur, NULL, fond, &positionTexte);
+
+
+    //On s'occupe maintenant de la couleur des dés
+    SDL_Surface *R1 = NULL, *V1 = NULL, *B1 = NULL, *J1 = NULL, *P1 = NULL, *O1 = NULL;
+    SDL_Rect posR1, posV1, posB1, posJ1, posP1, posO1;
+
+    //affichage dé rouge 1
+    if ((R1 = IMG_Load("../../Documents/Des/R1.png"))==NULL)
+    {
+        fprintf(stderr,"impossible de charger l'image du dé R1");
+    }
+    posR1.x = 2*((fond->w)/3);
+    posR1.y = 200;
+    SDL_BlitSurface(R1,NULL,fond,&posR1);
+
+    //affichage dé vert 1
+    if ((V1 = IMG_Load("../../Documents/Des/V1.png"))==NULL)
+    {
+        fprintf(stderr,"impossible de charger l'image du dé V1");
+    }
+    posV1.x = 2*((fond->w)/3);
+    posV1.y = 300;
+    SDL_BlitSurface(V1,NULL,fond,&posV1);
+
+    //affichage dé bleu 1
+    if ((B1 = IMG_Load("../../Documents/Des/B1.png"))==NULL)
+    {
+        fprintf(stderr,"impossible de charger l'image du dé B1");
+    }
+    posB1.x = 2*((fond->w)/3);
+    posB1.y = 400;
+    SDL_BlitSurface(B1,NULL,fond,&posB1);
+
+    //affichage dé jaune 1
+    if ((J1 = IMG_Load("../../Documents/Des/J1.png"))==NULL)
+    {
+        fprintf(stderr,"impossible de charger l'image du dé J1");
+    }
+    posJ1.x = 5*((fond->w)/6);
+    posJ1.y = 200;
+    SDL_BlitSurface(J1,NULL,fond,&posJ1);
+
+    //affichage dé violet 1
+    if ((P1 = IMG_Load("../../Documents/Des/P1.png"))==NULL)
+    {
+        fprintf(stderr,"impossible de charger l'image du dé P1");
+    }
+    posP1.x = 5*((fond->w)/6);
+    posP1.y = 300;
+    SDL_BlitSurface(P1,NULL,fond,&posP1);
+
+    //affichage dé orange 1
+    if ((O1 = IMG_Load("../../Documents/Des/O1.png"))==NULL)
+    {
+        fprintf(stderr,"impossible de charger l'image du dé O1");
+    }
+    posO1.x = 5*((fond->w)/6);
+    posO1.y = 400;
+    SDL_BlitSurface(O1,NULL,fond,&posO1);
+
+    // on va définir une boucle d'affichage
+do {
+
+
+    // on repasse la variable de boucle à "FAUX"
+    affichageChange = FAUX;
+
+    //On s'occupe des résolutions
+    // 640*480
     SDL_Surface *texte640 = NULL;
     if (resolution==0)      //on change la couleur de la résolution déjà choisie
     texte640 = TTF_RenderText_Solid(policePerudo,"640x480", couleurBlanche);
     else
     texte640 = TTF_RenderText_Solid(policePerudo,"640x480", couleurNoire);
+
+    SDL_Rect position640;
+    position640.x = (fond->w)/6;
+    position640.y = 200;
+
     SDL_BlitSurface(texte640, NULL, fond, &position640);
     SDL_Flip(fond);
-                        printf("Abwa2\n");
+
     //800*600
     //Texte
     SDL_Surface *texte800 = NULL;
@@ -264,9 +365,9 @@ void options(SDL_Surface * fond, int resolution)
     //position
       SDL_Rect position800;
     position800.x = (fond->w)/6 ;//(fond->w)/6;
-    position800.y =300 ;//(100+(((fond->h)-200)/10)) - 4*(texte800->h /2);
+    position800.y = 300;
     SDL_BlitSurface(texte800, NULL, fond, &position800);
-                                        printf("Abwa3\n");
+
     //1280*960
     //Texte
     SDL_Surface *texte1280 = NULL;
@@ -277,12 +378,14 @@ void options(SDL_Surface * fond, int resolution)
     //position
     SDL_Rect position1280;
     position1280.x = (fond->w)/6;
-    position1280.y = 400 ;//(100+(((fond->h)-200)/10)) - 6*(texte1280->h /2);
+    position1280.y = 400;
     SDL_BlitSurface(texte1280, NULL, fond, &position1280);
-                    printf("Abwa4\n");
+
     //Et on affiche tout ça
     SDL_Flip(fond);
-                    printf("Abwa5\n");
+
+    //on relance le menu
+    continuer = VRAI;
     while (continuer)
     {
         FE_WaitEvent(&event);
@@ -297,48 +400,81 @@ void options(SDL_Surface * fond, int resolution)
 
                     if (estDans(event,texte640,position640))
                     {
+
                         if (resolution != 0)
                         {
-                            char tampon[10] = "";
+
+                            char tampon[TAILLE_MAX];
                             rewind(fconfig);
-                            fgets(tampon,4,fconfig);//on passe après le "res="
+                            fgets(tampon,5,fconfig);//on passe après le "res="
                             fputc('0',fconfig);
-                            fprintf(stdout,"Veuillez redémarrer pour que les changements soient pris en compte.");
+                            rewind(fconfig);
+
+                            resolution = 0;
+                            fprintf(stdout,"Veuillez redémarrer pour que les changements soient pris en compte.\n");
+                            affichageChange = VRAI;
+                            printf("abwa640\n%s%d\n", tampon,resolution);
+                            continuer = FAUX;
                         }
                     }
                     if (estDans(event,texte800,position800))
                     {
+
                         if(resolution != 1)
                         {
-                            char tampon[10] = "";
+                            char tampon[TAILLE_MAX];
                             rewind(fconfig);
-                            fgets(tampon,4,fconfig);//on passe après le "res="
+                            fgets(tampon,5,fconfig);//on passe après le "res="
                             fputc('1',fconfig);
-                            fprintf(stdout,"Veuillez redémarrer pour que les changements soient pris en compte.");
+                            resolution = 1;
+                            fprintf(stdout,"Veuillez redémarrer pour que les changements soient pris en compte.\n");
+                            affichageChange = VRAI;
+                            printf("abwa800\n%s%d\n",tampon, resolution);
+                            continuer = FAUX;
                         }
                     }
                     if  (estDans(event,texte1280,position1280))
                     {
                         if(resolution !=2)
                         {
-                            char tampon[10] = "";
+
+                            char tampon[TAILLE_MAX];
                             rewind(fconfig);
-                            fgets(tampon,4,fconfig);//on passe après le "res="
+                            fgets(tampon,5,fconfig);//on passe après le "res="
                             fputc('2',fconfig);
-                            fprintf(stdout,"Veuillez redémarrer pour que les changements soient pris en compte.");
+                            resolution = 2;
+                            fprintf(stdout,"Veuillez redémarrer pour que les changements soient pris en compte.\n");
+                            affichageChange = VRAI;
+                            printf("abwa1280\n%s%d\n",tampon,resolution);
+                            continuer = FAUX;
                         }
                     }
                 }
+                break;
             }
+
+
+
+
+
+
     }
 
-
     //Et on free, c'est important
-    TTF_CloseFont(policePerudo);
-    SDL_FreeSurface(texteResolution);
     SDL_FreeSurface(texte640);
     SDL_FreeSurface(texte800);
     SDL_FreeSurface(texte1280);
+} while (affichageChange);
+    SDL_FreeSurface(texteResolution);
+    SDL_FreeSurface(texteCouleur);
+    SDL_FreeSurface(R1);
+    SDL_FreeSurface(V1);
+    SDL_FreeSurface(B1);
+    SDL_FreeSurface(J1);
+    SDL_FreeSurface(P1);
+    SDL_FreeSurface(O1);
+    TTF_CloseFont(policePerudo);
+    fclose(fconfig);
 }
 
 

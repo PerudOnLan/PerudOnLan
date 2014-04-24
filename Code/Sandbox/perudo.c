@@ -19,29 +19,19 @@ int main() {
     long largeurFenetre = 640;
     // loading de la config perso
     FILE* fconfig = NULL;
-    if ((fconfig = fopen("config.ini","r+"))==NULL)
+    if ((fconfig = fopen("config.ini","r"))==NULL)
     {
         perror("fopen");
         fprintf(stdout,"\nAttention, options personnalisees impossibles a charger ! Verifiez config.ini \n");
     }
-    /* Pour l'instant, config.ini va contenir 2 lignes : largeur=valeur
-                                                         hauteur=valeur
+    /* Pour l'instant, config.ini va contenir 1 ligne : la résolution
         Si on n'arrive pas a l ouvrir, on panique pas, on prend les params de base
     */
     else
     // on lit les paramètres
     {
-        char tampon[10] = "";
+        char tampon[TAILLE_MAX] = "";
         rewind(fconfig);
-       /* fgets(tampon,7,fconfig); // On vide "res=x"
-        fgets(tampon,9,fconfig); //on vide "largeur="
-        largeurFenetre = strtol((fgets(tampon,6,fconfig)),NULL,10); // on convertit jusqu'a 4 chiffres en un long
-        printf("%s", tampon);
-        fgets(tampon,9,fconfig); //on vide "hauteur="
-        hauteurFenetre = strtol((fgets(tampon,6,fconfig)),NULL,10); // on convertit jusqu'a 4 chiffres en un long
-        printf("%s", tampon);
-        printf("largeur =%ld hauteur=%ld\n", largeurFenetre,hauteurFenetre);
-        fclose(fconfig); */
         fgets(tampon,5,fconfig); //on vide "res="
         resolution = strtol((fgets(tampon,2,fconfig)),NULL,10);
         switch(resolution)
@@ -55,11 +45,12 @@ int main() {
                 largeurFenetre = 800;
                 break;
                 case 2:
-                hauteurFenetre = 1280;
-                largeurFenetre = 960;
+                hauteurFenetre = 960;
+                largeurFenetre = 1280;
                 break;
             }
         printf ("resolution : %d\n", resolution);
+        fclose(fconfig);
     }
 
     //init SDL

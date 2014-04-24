@@ -20,7 +20,7 @@
 #include "fastevents.h"
 #include "couleurs.h"
 
-#define TAILLE_MAX 10
+#define TAILLE_MAX 11
 
 /**
 *\enum Booleen
@@ -30,6 +30,24 @@ typedef enum
     FAUX,           /** <Valeur Fausse */
     VRAI            /** <Valeur vraie */
 } Booleen;
+
+/**
+* \enum couleurDes
+* \brief les couleurs de dés
+*
+* toutes les valeurs de couleurs possibles pour les dés
+*/
+
+
+typedef enum
+{
+    rouge,
+    vert,
+    bleu,
+    jaune,
+    violet,
+    orange
+} couleurDes ;
 
 Booleen estDans(SDL_Event event, SDL_Surface * rectangle, SDL_Rect pos);
 
