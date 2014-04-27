@@ -115,12 +115,36 @@ while(!quitter)
     while (continuer)
     {
         FE_WaitEvent(&event);
-        char cheat[10];
         switch(event.type)
             {
                 case SDL_QUIT:
                     continuer = FAUX ;
                     quitter = VRAI;
+                break;
+                case SDL_KEYDOWN:
+                    switch(event.key.keysym.sym)
+                    {
+                        case SDLK_ESCAPE:
+                        continuer = FAUX;
+                        quitter = VRAI;
+                        break;
+                        case SDLK_c:
+                         //début du jeu
+                        partie(fond);
+                        continuer = FAUX;
+                        break;
+                        case SDLK_r:
+                        continuer = FAUX;
+                        quitter = VRAI;
+                        break;
+                        case SDLK_o:
+                        options(fond);
+                        continuer=FAUX;
+                        break;
+                        default:
+                        break;
+                    }
+
                 break;
                 case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button==SDL_BUTTON_LEFT)
@@ -131,13 +155,11 @@ while(!quitter)
                      //début du jeu
                         partie(fond);
                         continuer = FAUX;
-
                     }
                     if (estDans(event,boutonRejoindre,positionRejoindre))
                     {
                         continuer = FAUX;
                         quitter = VRAI;
-
                     }
                     if  (estDans(event,boutonOptions,positionOptions))
                     {
@@ -163,7 +185,7 @@ while(!quitter)
                     if ((policeSaisie = TTF_OpenFont("../../Documents/arcadeclassic.ttf", 30))==NULL)
                     {
                         SDL_GetError();
-                        fprintf(stdout,"Quelque chose cloche... Avez vous la police arcadeclassic.ttf ?");
+                        fprintf(stderr,"Quelque chose cloche... Avez vous la police arcadeclassic.ttf ?");
                         exit(EXIT_FAILURE);
                     }
                     SDL_Color couleurBlanche = {255,255,255} ;
@@ -210,7 +232,7 @@ while(!quitter)
 void options(SDL_Surface * fond)
 {
     int resolution = 0;
-
+    couleurDes couleur = rouge;
  /*façon alternative de récupérer la résolution actuelle
     //On récupère la résolution actuelle
     switch (fond->h)
@@ -233,14 +255,17 @@ void options(SDL_Surface * fond)
     if ((fconfig = fopen("config.ini","r+"))==NULL)
     {
         perror("fopen");
-        fprintf(stdout,"\nAttention, options personnalisees impossibles a charger ! Verifiez config.ini \n");
+        fprintf(stderr,"\nAttention, options personnalisees impossibles a charger ! Verifiez config.ini \n");
     }
     else
     {
         char tampon[10] = "";
         rewind(fconfig);
         fgets(tampon,5,fconfig); // On vide "res="
-        resolution = strtol((fgets(tampon,2,fconfig)),NULL,10); // on convertit le char en long
+        resolution = strtol((fgets(tampon,5,fconfig)),NULL,10); // on convertit le char en long
+        fgets(tampon,7,fconfig); //on vide "color="
+        couleur = strtol((fgets(tampon,5,fconfig)),NULL,10); // Le chiffre donne directement la couleur, car couleurDes est un type énum
+        fprintf(stdout,"abwa res = %d et couleur = %d\n",resolution,couleur);
     }
     //On remet le fond uniforme
     SDL_FillRect(fond,NULL,VERT);
@@ -251,7 +276,7 @@ void options(SDL_Surface * fond)
   if ((policePerudo = TTF_OpenFont("../../Documents/arcadeclassic.ttf", ((fond->w)/15)))==NULL)
     {
         SDL_GetError();
-        fprintf(stdout,"Quelque chose cloche... Avez vous la police arcadeclassic.ttf ?");
+        fprintf(stderr,"Quelque chose cloche... Avez vous la police arcadeclassic.ttf ?");
         exit(EXIT_FAILURE);
     }
     SDL_Color couleurNoire = { 0,0,0 } ;
@@ -259,16 +284,16 @@ void options(SDL_Surface * fond)
 
     //Texte "Résolution"
     SDL_Rect positionTexte;
-    positionTexte.x = (fond->w)/6;
-    positionTexte.y = 100;
+    positionTexte.x = (fond->w)/6 - 80;
+    positionTexte.y = 50;
 
     SDL_Surface *texteResolution = NULL;
     texteResolution = TTF_RenderText_Solid(policePerudo,"RESOLUTION", couleurNoire);
     SDL_BlitSurface(texteResolution, NULL, fond, &positionTexte);
 
     //Texte "Couleur"
-    positionTexte.x = 2*(fond->w)/3;
-    positionTexte.y = 100;
+    positionTexte.x = 2*(fond->w)/3 - 80;
+    positionTexte.y = 50;
 
     SDL_Surface *texteCouleur = NULL;
     texteCouleur = TTF_RenderText_Solid(policePerudo,"COULEUR", couleurNoire);
@@ -276,62 +301,88 @@ void options(SDL_Surface * fond)
 
 
     //On s'occupe maintenant de la couleur des dés
-    SDL_Surface *R1 = NULL, *V1 = NULL, *B1 = NULL, *J1 = NULL, *P1 = NULL, *O1 = NULL;
-    SDL_Rect posR1, posV1, posB1, posJ1, posP1, posO1;
+    SDL_Surface *R1 = NULL, *V1 = NULL, *B1 = NULL, *J1 = NULL, *P1 = NULL, *O1 = NULL, *outliner = NULL;
+    SDL_Rect posR1, posV1, posB1, posJ1, posP1, posO1, posOutliner;
 
     //affichage dé rouge 1
     if ((R1 = IMG_Load("../../Documents/Des/R1.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé R1");
+        R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
-    posR1.x = 2*((fond->w)/3);
-    posR1.y = 200;
+    posR1.x = 2*((fond->w)/3) - 80;
+    posR1.y = 150;
     SDL_BlitSurface(R1,NULL,fond,&posR1);
 
     //affichage dé vert 1
     if ((V1 = IMG_Load("../../Documents/Des/V1.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé V1");
+        R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
-    posV1.x = 2*((fond->w)/3);
-    posV1.y = 300;
+    posV1.x = 2*((fond->w)/3) - 80;
+    posV1.y = 90+((fond->h)/3);
     SDL_BlitSurface(V1,NULL,fond,&posV1);
 
     //affichage dé bleu 1
     if ((B1 = IMG_Load("../../Documents/Des/B1.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé B1");
+        R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
-    posB1.x = 2*((fond->w)/3);
-    posB1.y = 400;
+    posB1.x = 2*((fond->w)/3) - 80;
+    posB1.y = 30 + 2*((fond->h)/3);
     SDL_BlitSurface(B1,NULL,fond,&posB1);
 
     //affichage dé jaune 1
     if ((J1 = IMG_Load("../../Documents/Des/J1.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé J1");
+        R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
-    posJ1.x = 5*((fond->w)/6);
-    posJ1.y = 200;
+    posJ1.x = 5*((fond->w)/6) - 80;
+    posJ1.y = 150;
     SDL_BlitSurface(J1,NULL,fond,&posJ1);
 
     //affichage dé violet 1
     if ((P1 = IMG_Load("../../Documents/Des/P1.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé P1");
+        R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
-    posP1.x = 5*((fond->w)/6);
-    posP1.y = 300;
+    posP1.x = 5*((fond->w)/6) - 80;
+    posP1.y = 90+((fond->h)/3);
     SDL_BlitSurface(P1,NULL,fond,&posP1);
 
     //affichage dé orange 1
     if ((O1 = IMG_Load("../../Documents/Des/O1.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé O1");
+        R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
-    posO1.x = 5*((fond->w)/6);
-    posO1.y = 400;
+    posO1.x = 5*((fond->w)/6) - 80;
+    posO1.y = 30 + 2*((fond->h)/3);
     SDL_BlitSurface(O1,NULL,fond,&posO1);
+
+    // Et on définit un outliner
+
+    if ((outliner = IMG_Load("../../Documents/Des/outliner.png"))==NULL)
+    {
+        fprintf(stderr,"impossible de charger l'image du curseur");
+        outliner = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
+    }
+    //On définit la position des textes, qui ne changera pas, puisque la résolution ne change qu'après redémarrage
+    SDL_Rect position640;
+    position640.x = (fond->w)/6 - 80;
+    position640.y = 150;
+
+    SDL_Rect position800;
+    position800.x = (fond->w)/6 - 80;
+    position800.y = 90+((fond->h)/3);
+
+    SDL_Rect position1280;
+    position1280.x = (fond->w)/6 - 80;
+    position1280.y = 30 + 2*((fond->h)/3);
 
     // on va définir une boucle d'affichage
 do {
@@ -348,38 +399,57 @@ do {
     else
     texte640 = TTF_RenderText_Solid(policePerudo,"640x480", couleurNoire);
 
-    SDL_Rect position640;
-    position640.x = (fond->w)/6;
-    position640.y = 200;
-
     SDL_BlitSurface(texte640, NULL, fond, &position640);
-    SDL_Flip(fond);
 
     //800*600
     //Texte
     SDL_Surface *texte800 = NULL;
-   if (resolution==1)      //on change la couleur de la résolution déjà choisie
+    if (resolution==1)      //on change la couleur de la résolution déjà choisie
     texte800 = TTF_RenderText_Solid(policePerudo,"800x600", couleurBlanche);
     else
     texte800 = TTF_RenderText_Solid(policePerudo,"800x600", couleurNoire);
-    //position
-      SDL_Rect position800;
-    position800.x = (fond->w)/6 ;//(fond->w)/6;
-    position800.y = 300;
+
     SDL_BlitSurface(texte800, NULL, fond, &position800);
 
     //1280*960
     //Texte
     SDL_Surface *texte1280 = NULL;
-   if (resolution==2)      //on change la couleur de la résolution déjà choisie
-    texte1280 = TTF_RenderText_Solid(policePerudo,"1280x960", couleurBlanche);
+    if (resolution==2)      //on change la couleur de la résolution déjà choisie
+    texte1280 = TTF_RenderText_Solid(policePerudo,"1280x1024", couleurBlanche);
     else
-    texte1280 = TTF_RenderText_Solid(policePerudo,"1280x960", couleurNoire);
-    //position
-    SDL_Rect position1280;
-    position1280.x = (fond->w)/6;
-    position1280.y = 400;
+    texte1280 = TTF_RenderText_Solid(policePerudo,"1280x1024", couleurNoire);
+
     SDL_BlitSurface(texte1280, NULL, fond, &position1280);
+
+    //On met un outliner autour du dé de la couleur choisie
+    switch(couleur)
+    {
+        case rouge:
+        posOutliner.x = posR1.x - 10;
+        posOutliner.y = posR1.y - 10;
+        break;
+        case vert:
+        posOutliner.x = posV1.x - 10;
+        posOutliner.y = posV1.y - 10;
+        break;
+        case bleu:
+        posOutliner.x = posB1.x - 10;
+        posOutliner.y = posB1.y - 10;
+        break;
+        case jaune:
+        posOutliner.x = posJ1.x - 10;
+        posOutliner.y = posJ1.y - 10;
+        break;
+        case violet:
+        posOutliner.x = posP1.x - 10;
+        posOutliner.y = posP1.y - 10;
+        break;
+        case orange:
+        posOutliner.x = posO1.x - 10;
+        posOutliner.y = posO1.y - 10;
+        break;
+    }
+    SDL_BlitSurface(outliner,NULL,fond,&posOutliner);
 
     //Et on affiche tout ça
     SDL_Flip(fond);
@@ -393,6 +463,12 @@ do {
             {
                 case SDL_QUIT:
                     continuer = FAUX ;
+                break;
+                case SDL_KEYDOWN:
+                    if (event.key.keysym.sym == SDLK_ESCAPE)
+                    {
+                        continuer = FAUX;
+                    }
                 break;
                 case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button==SDL_BUTTON_LEFT)
@@ -413,7 +489,6 @@ do {
                             resolution = 0;
                             fprintf(stdout,"Veuillez redémarrer pour que les changements soient pris en compte.\n");
                             affichageChange = VRAI;
-                            printf("abwa640\n%s%d\n", tampon,resolution);
                             continuer = FAUX;
                         }
                     }
@@ -429,7 +504,6 @@ do {
                             resolution = 1;
                             fprintf(stdout,"Veuillez redémarrer pour que les changements soient pris en compte.\n");
                             affichageChange = VRAI;
-                            printf("abwa800\n%s%d\n",tampon, resolution);
                             continuer = FAUX;
                         }
                     }
@@ -445,18 +519,12 @@ do {
                             resolution = 2;
                             fprintf(stdout,"Veuillez redémarrer pour que les changements soient pris en compte.\n");
                             affichageChange = VRAI;
-                            printf("abwa1280\n%s%d\n",tampon,resolution);
                             continuer = FAUX;
                         }
                     }
                 }
                 break;
             }
-
-
-
-
-
 
     }
 
@@ -473,6 +541,7 @@ do {
     SDL_FreeSurface(J1);
     SDL_FreeSurface(P1);
     SDL_FreeSurface(O1);
+    SDL_FreeSurface(outliner);
     TTF_CloseFont(policePerudo);
     fclose(fconfig);
 }

@@ -22,7 +22,7 @@ int main() {
     if ((fconfig = fopen("config.ini","r"))==NULL)
     {
         perror("fopen");
-        fprintf(stdout,"\nAttention, options personnalisees impossibles a charger ! Verifiez config.ini \n");
+        fprintf(stderr,"\nAttention, options personnalisees impossibles a charger ! Verifiez config.ini \n");
     }
     /* Pour l'instant, config.ini va contenir 1 ligne : la résolution
         Si on n'arrive pas a l ouvrir, on panique pas, on prend les params de base
@@ -45,8 +45,11 @@ int main() {
                 largeurFenetre = 800;
                 break;
                 case 2:
-                hauteurFenetre = 960;
+                hauteurFenetre = 1024;
                 largeurFenetre = 1280;
+                break;
+                default:
+                fprintf(stderr,"\nAttention, options personnalisees impossibles a charger ! Verifiez config.ini \n");
                 break;
             }
         printf ("resolution : %d\n", resolution);

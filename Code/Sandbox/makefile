@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -m32 -g
+CFLAGS = -m32 -g -Wall
 SDLLIBS = -lSDLmain -lSDL -lSDL_image -lSDL_ttf -lSDL_net -lSDL_net2
 PHEADERS =../../Sources_et_libs/headers
 PLIBS=../../Sources_et_libs/libs

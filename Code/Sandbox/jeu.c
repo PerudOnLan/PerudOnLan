@@ -45,7 +45,7 @@ void partie(SDL_Surface * fond) {
  if ((policeSaisie = TTF_OpenFont("../../Documents/arcadeclassic.ttf", 30))==NULL)
     {
         SDL_GetError();
-        fprintf(stdout,"Quelque chose cloche... Avez vous la police arcadeclassic.ttf ?");
+        fprintf(stderr,"Quelque chose cloche... Avez vous la police arcadeclassic.ttf ?");
         exit(EXIT_FAILURE);
     }
         SDL_Color couleurBlanche = {255,255,255} ;
@@ -237,7 +237,7 @@ void klik(SDL_Surface * fond)
     if ((policePerudo = TTF_OpenFont("../../Documents/arcadeclassic.ttf", ((fond->w)/15)))==NULL)
     {
         SDL_GetError();
-        fprintf(stdout,"Quelque chose cloche... Avez vous la police arcadeclassic.ttf ?");
+        fprintf(stderr,"Quelque chose cloche... Avez vous la police arcadeclassic.ttf ?");
         exit(EXIT_FAILURE);
     }
     SDL_Color couleurNoire = { 0,0,0 } ;
@@ -249,6 +249,7 @@ void klik(SDL_Surface * fond)
     if ((R1 = IMG_Load("../../Documents/Des/R1.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé R1");
+        R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
     posR1.x = ((fond->w)/2)-40;
     posR1.y = ((fond->h)/2)-40;
@@ -258,6 +259,7 @@ void klik(SDL_Surface * fond)
     if ((R2 = IMG_Load("../../Documents/Des/R2.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé R2");
+        R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
     posR2.x = ((fond->w)/2)-40;
     posR2.y = ((fond->h)/2)+80;
@@ -267,6 +269,7 @@ void klik(SDL_Surface * fond)
     if ((R3 = IMG_Load("../../Documents/Des/R3.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé R3");
+        R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
     posR3.x = ((fond->w)/2)-40;
     posR3.y = ((fond->h)/2)+200;
@@ -276,6 +279,7 @@ void klik(SDL_Surface * fond)
     if ((R4 = IMG_Load("../../Documents/Des/R4.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé R4");
+        R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
     posR4.x = ((fond->w)/2)+80;
     posR4.y = ((fond->h)/2)-40;
@@ -285,6 +289,7 @@ void klik(SDL_Surface * fond)
     if ((R5 = IMG_Load("../../Documents/Des/R5.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé R5");
+        R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
     posR5.x = ((fond->w)/2)+80;
     posR5.y = ((fond->h)/2)+80;
@@ -294,6 +299,7 @@ void klik(SDL_Surface * fond)
     if ((R6 = IMG_Load("../../Documents/Des/R6.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé R6");
+        R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
     posR6.x = ((fond->w)/2)+80;
     posR6.y = ((fond->h)/2)+200;
@@ -361,11 +367,11 @@ void klik(SDL_Surface * fond)
                         case SDLK_ESCAPE:
                         continuer =FAUX;
                         break;
-                        case SDLK_UP:
-                        break;
-                        case SDLK_DOWN:
+                        default:
                         break;
                     }
+                break;
+                default:
                 break;
             }
         SDL_Delay(2);
@@ -428,4 +434,5 @@ void klik(SDL_Surface * fond)
     SDL_FreeSurface(R5);
     SDL_FreeSurface(R6);
     SDL_FreeSurface(texteTimer);
+    TTF_CloseFont(policePerudo);
 }
