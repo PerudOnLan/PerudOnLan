@@ -17,7 +17,6 @@
 #include <time.h>
 #include "SDLUtils.h"
 #include "fastevents.h"
-#include "couleurs.h"
 #include "menu.h"
 
 #endif

@@ -17,9 +17,9 @@
 #include <SDL/SDL_ttf.h>
 #include "SDLUtils.h"
 #include "fastevents.h"
-#include "couleurs.h"
 #include "PerudUtils.h"
 #include "jeu.h"
+#include "couleurs.h"
 
 void menu(SDL_Surface * fond);
 void options(SDL_Surface * fond);

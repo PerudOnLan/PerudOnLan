@@ -9,9 +9,8 @@
 *
 */
 
-
-#ifndef _COULEUR_H
-#define _COULEUR_H
+#ifndef _COULEURS_H
+#define _COULEURS_H
 /** \def ROUGE
 * \brief couleur rouge
 */

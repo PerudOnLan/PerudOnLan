@@ -86,9 +86,8 @@ int longueur_mot(char * mot)
         }
     }
 
-
 /**
-* \fn void saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * police, SDL_Color couleurPolice, SDL_Color couleurFond, char * mot, int longueur_max, SDL_Surface * fond)
+* \fn int saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * police, SDL_Color couleurPolice, SDL_Color couleurFond, char * mot, int longueur_max, SDL_Surface * fond)
 * \brief Permet de saisir du texte en interface graphique
 * \param champ La surface de saisie
 * \param pos La position du coin supérieur gauche de la surface de saisie
@@ -99,10 +98,11 @@ int longueur_mot(char * mot)
 * \param mot La chaine de caractère à remplir
 * \param longueur_max la longueur maximale de la saisie
 * \param fond La surface qui sert de fond, comme dans tous les programmes qui ont besoin d'affichage
+* \return EXIT_SUCCESS normalement ou EXIT_FAILURE si la saisie a été arrêtée en urgence
 * \author Dede
 * \date 16/04
 */
-void saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * police, SDL_Color couleurPolice, SDL_Color couleurFond, char * mot, int longueur_max, SDL_Surface * fond)
+int saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * police, SDL_Color couleurPolice, SDL_Color couleurFond, char * mot, int longueur_max, SDL_Surface * fond)
     {
         int longueur = 0;
         Booleen continuer = VRAI;
@@ -123,7 +123,8 @@ void saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * 
             switch(event.type)
             {
                 case SDL_QUIT:
-                    continuer = FAUX;
+                    free(texteEntre);
+                    return EXIT_FAILURE;
                 break;
                 case SDL_KEYDOWN:
                     switch(event.key.keysym.sym)
@@ -169,13 +170,14 @@ void saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * 
                 SDL_FillRect(champ,NULL,couleurChamp);
                 SDL_BlitSurface(champ, NULL, fond, &pos);
                 SDL_Flip(fond);
+
                 texteEntre = TTF_RenderText_Shaded(police,mot,couleurPolice, couleurFond);
                 SDL_BlitSurface(texteEntre, NULL, fond, &positionEntre);
                 SDL_Flip(fond);
-                /* Ca c'est du debug
+                /* Ca c'est du debug */
                 printf("%d\n", longueur);
                 printf("%s\n", mot);
-                */
+
                 break;
                 default:
                 break;
@@ -183,5 +185,36 @@ void saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * 
         }
         //on n'oublie pas de free à la fin
         SDL_FreeSurface(texteEntre);
+        return EXIT_SUCCESS;
     }
 
+/**
+* \fn void recupInfos (int * resolution, couleurDes * couleur)
+* \brief affecte les bonnes valeurs dans resolution et couleur
+* \param &resolution l'adresse de la variable résolution
+* \param &couleur l'adresse de la variable couleur
+* \author Dede
+* \date 3/05
+*
+* On a souvent besoin de récupérer les options que le joueur a choisies, d'où la création de cette fonction
+*
+*/
+void recupInfos (int * resolution, couleurDes * couleur)
+{
+    FILE* fconfig = NULL;
+    if ((fconfig = fopen("config.ini","r+"))==NULL)
+    {
+        perror("fopen");
+        fprintf(stderr,"\nAttention, options personnalisees impossibles a charger ! Verifiez config.ini \n");
+    }
+    else
+    {
+        char tampon[10] = "";
+        rewind(fconfig);
+        fgets(tampon,5,fconfig); // On vide "res="
+        (*resolution) = strtol((fgets(tampon,5,fconfig)),NULL,10); // on convertit le char en long
+        fgets(tampon,7,fconfig); //on vide "color="
+        (*couleur) = strtol((fgets(tampon,5,fconfig)),NULL,10); // Le chiffre donne directement la couleur, car couleurDes est un type énum
+       //DEBUG fprintf(stdout,"abwa res = %d et couleur = %d\n",resolution,couleur);
+    }
+}

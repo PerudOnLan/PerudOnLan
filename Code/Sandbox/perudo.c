@@ -11,8 +11,8 @@
 #include "perudo.h"
 
 
-
 int main() {
+
     //on initialise les paramètres au cas où on ne puisse les lire
     int resolution = 0;
     long hauteurFenetre = 480;

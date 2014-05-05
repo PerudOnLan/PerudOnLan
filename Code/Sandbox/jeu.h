@@ -17,8 +17,8 @@
 #include <time.h>
 #include "SDLUtils.h"
 #include "fastevents.h"
-#include "couleurs.h"
 #include "PerudUtils.h"
+#include "couleurs.h"
 
 typedef enum {MISE, MENTEUR, EXACT} Type;
 
@@ -40,7 +40,7 @@ typedef struct {
     int nb_de_des;
 } Joueur;
 
-void partie (SDL_Surface * fond);
+int partie (SDL_Surface * fond);
 
 void klik(SDL_Surface * fond);
 

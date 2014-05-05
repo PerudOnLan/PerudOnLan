@@ -53,6 +53,7 @@ Booleen estDans(SDL_Event event, SDL_Surface * rectangle, SDL_Rect pos);
 
 int longueur_mot(char * mot);
 
-void saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * police, SDL_Color couleurPolice, SDL_Color couleurFond, char * mot, int longueur_max, SDL_Surface * fond);
+int saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * police, SDL_Color couleurPolice, SDL_Color couleurFond, char * mot, int longueur_max, SDL_Surface * fond);
 
+void recupInfos (int * resolution, couleurDes * couleur);
 #endif

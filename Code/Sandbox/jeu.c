@@ -13,72 +13,133 @@
 #include "jeu.h"
 
 /**
-* \fn void partie(SDL_Surface * fond)
+* \fn int partie(SDL_Surface * fond)
 * \brief Code de ce qu'il se passe en jeu
 * \param fond le fond d'écran sur lequel s'affiche les choses
+* \return EXIT_FAILURE ou EXIT_SUCCESS
 * \author François
 * \date 12/04
 */
-void partie(SDL_Surface * fond) {
+int partie(SDL_Surface * fond) {
+
+SDL_Color couleurNoire = { 0,0,0 } ;
+SDL_Color couleurRouge = { 200,0,0};
+SDL_Color couleurBlanche = {255,255,255};
+SDL_Color couleurViolette = {150,0,150};
+
     //On remet le fond uniforme
     SDL_FillRect(fond,NULL,VERT);
-    SDL_Flip(fond);
-
-    //On crée le champ de saisie
-    SDL_Surface *champSaisie = NULL;
-    champSaisie = SDL_CreateRGBSurface(SDL_HWSURFACE,320, 50, 32, 0, 0, 0, 0);
-    SDL_FillRect(champSaisie,NULL,VIOLET);
-    SDL_Rect positionChamp;
-    positionChamp.x = (fond->w)/2 - 160;
-    positionChamp.y = (fond->h)/2 - 25;
-    SDL_BlitSurface(champSaisie,NULL,fond,&positionChamp);
     SDL_Flip(fond);
 
     //initialisation de l'aléatoire
     srandom(time(NULL)); /*la seed pour le tirage des des, srandom() sous Linux */
 
-    //on définit le nombre de joueurs
-    int nb_de_joueurs;
-    fprintf(stdout, "Combien de joueurs ?\n");
-    //initialisation de la police de saisie
-     TTF_Font *policeSaisie = NULL;
- if ((policeSaisie = TTF_OpenFont("../../Documents/arcadeclassic.ttf", 30))==NULL)
-    {
-        SDL_GetError();
-        fprintf(stderr,"Quelque chose cloche... Avez vous la police arcadeclassic.ttf ?");
-        exit(EXIT_FAILURE);
-    }
-        SDL_Color couleurBlanche = {255,255,255} ;
-        SDL_Color couleurViolette = {150,0,150};
+    //on récupère résolution et couleur des dés du joueur
+    int resolution = 0;
+    couleurDes couleur = rouge;
+
+    recupInfos(&resolution, &couleur);
+
+    //on crée les surfaces et polices dont on aura besoin
+    SDL_Surface * texteAffiche = NULL;
+    SDL_Rect positionTexte ;
+
+        //initialisation de la police de saisie
+        TTF_Font *policeSaisie = NULL;
+        if ((policeSaisie = TTF_OpenFont("../../Documents/arcadeclassic.ttf", (fond->w)/15))==NULL)
+        {
+            SDL_GetError();
+            fprintf(stderr,"Quelque chose cloche... Avez vous la police arcadeclassic.ttf ?");
+            exit(EXIT_FAILURE);
+        }
+
+        //initialisation de la police d'affichage
+        TTF_Font *policeAffichage = NULL;
+        if ((policeAffichage = TTF_OpenFont("../../Documents/policePerudo.ttf", (fond->w)/15))==NULL)
+        {
+            SDL_GetError();
+            fprintf(stderr,"Quelque chose cloche... Avez vous la police policePerudo.ttf ?");
+            exit(EXIT_FAILURE);
+        }
+
+       //On crée le champ de saisie
+        SDL_Surface *champSaisie = NULL;
+        champSaisie = SDL_CreateRGBSurface(SDL_HWSURFACE,(fond->w)/2,(fond->h)/8, 32, 0, 0, 0, 0);
+        SDL_FillRect(champSaisie,NULL,VIOLET);
+        SDL_Rect positionChamp;
+
+        //on positionne le champ de saisie
+        positionChamp.x = (fond->w)/2 - ((champSaisie->w)/2);
+        positionChamp.y = (fond->h)/2 - ((champSaisie->h)/2);
+        SDL_BlitSurface(champSaisie,NULL,fond,&positionChamp);
+
+        //on définit le nombre de joueurs
+        int nb_de_joueurs;
+
+        texteAffiche = TTF_RenderText_Solid(policeAffichage,"NOMBRE DE JOUEURS",couleurNoire);
+        positionTexte.x = (fond->w)/2 - ((texteAffiche->w)/2);
+        positionTexte.y = (positionChamp.y) - (texteAffiche->h);
+        SDL_BlitSurface(texteAffiche,NULL,fond,&positionTexte);
+
+    SDL_Flip(fond);
+
+    //On effectue la saisie en en attendant une correcte
     do
     {
         char tampon[TAILLE_MAX+1]="";
-        saisir(champSaisie,positionChamp,VIOLET,policeSaisie,couleurBlanche,couleurViolette,tampon,1,fond);
+        if ((saisir(champSaisie,positionChamp,VIOLET,policeSaisie,couleurBlanche,couleurViolette,tampon,1,fond)) == EXIT_FAILURE)
+        {
+            //ici, l'arrêt brutal de la  saisie signifie qu'on veut arrêter totalement le jeu
+            return EXIT_FAILURE;
+        }
         nb_de_joueurs= strtol(tampon,NULL,10);
-    } while (nb_de_joueurs<=0 || nb_de_joueurs>=6) ;
+    } while (nb_de_joueurs<=0 || nb_de_joueurs>6) ;
 
-    Joueur * joueurs=NULL; /* les joueurs sont representes par un tableau */
+    Joueur * joueurs=NULL; // les joueurs sont representes par un tableau
     if ((joueurs = malloc(nb_de_joueurs * (sizeof(Joueur))))==NULL)
         {
         perror("malloc");
         exit(EXIT_FAILURE);
         }
-    Booleen continuer=VRAI; /* sert a determiner si la partie est toujours en cours */
+    Booleen continuer=VRAI; // sert a determiner si la partie est toujours en cours
+
+    // maintenant on demande les noms des joueurs (temporaire, après on les récupérera)
 
 
     int i;
-    for (i=0;i<nb_de_joueurs;i++) {
-        printf("Quel nom voulez-vous utiliser pour le joueur %d ?\n", i+1); // pas vraiment utile pour l'instant
-        saisir(champSaisie,positionChamp,VIOLET,policeSaisie,couleurBlanche,couleurViolette,joueurs[i].pseudo,TAILLE_MAX,fond);
+    for (i=0;i<nb_de_joueurs;i++)
+    {
+        //on "nettoie le pseudo"
+        int j = 0;
+        for(j=0;j<=TAILLE_MAX;j++)
+        {
+            joueurs[i].pseudo[j] = '\0';
+        }
+        char texte[16]="NOM DU JOUEUR X";
+        texte[14] = ('0'+i);
+
+        texteAffiche = TTF_RenderText_Solid(policeAffichage,texte,couleurNoire);
+        positionTexte.x = (fond->w)/2 - ((texteAffiche->w)/2);
+
+        printf("ca %s ca\n", joueurs[i].pseudo);
+
+        SDL_FillRect(fond,NULL,VERT);
+        SDL_Flip(fond);
+        SDL_BlitSurface(champSaisie,NULL,fond,&positionChamp);
+        SDL_BlitSurface(texteAffiche,NULL,fond,&positionTexte);
+        SDL_Flip(fond);
+        if ((saisir(champSaisie,positionChamp,VIOLET,policeSaisie,couleurBlanche,couleurViolette,joueurs[i].pseudo,TAILLE_MAX,fond))==EXIT_FAILURE)
+        {
+            //ici, l'arrêt brutal de la  saisie signifie qu'on veut arrêter totalement le jeu
+            return EXIT_FAILURE;
         }
 
-
-
-    Booleen premier_tour = VRAI; /* pour l'initialisation */
-    while (continuer)  /* la boucle principale, jusqu'a elimination d'un joueur */
-        {int i; int j; int k; int tmp; int joueur_actuel; int nb_de_des_max; /* initialisation des variables */
-        Booleen tour_de_jeu = VRAI; Annonce annonce_precedente; Annonce annonce; /*encore d'autres */
-        if (premier_tour) {   /* pour le premier tour, on fixe certains parametres */
+    }
+    Booleen premier_tour = VRAI; // pour l'initialisation
+    while (continuer)  // la boucle principale, jusqu'a elimination d'un joueur
+        {int i; int j; int k; int tmp; int joueur_actuel; int nb_de_des_max; // initialisation des variables
+        Booleen tour_de_jeu = VRAI; Annonce annonce_precedente; Annonce annonce; //encore d'autres
+        if (premier_tour) {   // pour le premier tour, on fixe certains parametres
             joueur_actuel=0;
             nb_de_des_max = nb_de_joueurs * 5;
             for (i=0;i<nb_de_joueurs;i++) {
@@ -86,57 +147,83 @@ void partie(SDL_Surface * fond) {
             }
         }
         for (i=0;i<nb_de_joueurs;i++) {
-            for (k=0;k<6;k++) { joueurs[i].des[k]=0;}  /* tirage des des */
+            for (k=0;k<6;k++) { joueurs[i].des[k]=0;}  // tirage des des
             for (j=0;j<joueurs[i].nb_de_des;j++) {
-                tmp = random()%6;  /* random() sous Linux */
+                tmp = random()%6;
                 for (k=0;k<6;k++) {
-                    if (tmp==k) {joueurs[i].des[k]++;} /* on met les valeurs dans un tableau : la premiere case est le nombre de 1, la deuxieme le nombre de 2, etc... */
+                    if (tmp==k) {joueurs[i].des[k]++;}
+                    // on met les valeurs dans un tableau : la premiere case est le nombre de 1, la deuxieme le nombre de 2, etc...
                 }
             }
         }
         for (i=0;i<nb_de_joueurs;i++) {
         fprintf(stdout, "\nDes du joueur %s :\n", joueurs[i].pseudo);
         for (k=0;k<6;k++) {
-                fprintf(stdout, "%d ", joueurs[i].des[k]);  /* pour controler si les annonces et le resultat sont coherents */
+                fprintf(stdout, "%d ", joueurs[i].des[k]);  // pour controler si les annonces et le resultat sont coherents
             }
         }
-        Booleen premiere_mise = VRAI; /* encore pour la definition de certaines conditions */
-        while (tour_de_jeu) {  /* boucle secondaire, jusqu'a perte ou gain d'un de */
-            int m; int e; annonce.type = MISE; int somme = 0; /* encore des variables */
-            if (!premiere_mise) { /* on fait ca si on a deja une mise avant, pour le jeu ce sera gere graphiquement */
+        Booleen premiere_mise = VRAI; // encore pour la definition de certaines conditions
+
+        while (tour_de_jeu) {  // boucle secondaire, jusqu'a perte ou gain d'un de
+
+            int m; int e; annonce.type = MISE; int somme = 0; // encore des variables
+
+            if (!premiere_mise) { // on fait ca si on a deja une mise avant, pour le jeu ce sera gere graphiquement
+
                 fprintf(stdout, "\nMenteur ? (0/1)\n");
                 scanf("%d", &m);
-                if (m==1) { annonce.type = MENTEUR; } /* c'est ici qu'on determine le type pour l'union */
-                else if (m==0) {
-                    fprintf(stdout, "\nExact ? (0/1)\n");
-                    scanf("%d", &e);
-                    if (e==1) { annonce.type = EXACT; } /* ou ici */
-                    else if (e==0) { annonce.type = MISE; }} /* ou la */
-                else { fprintf(stdout, "\nAnnonce incorrecte.\n"); }
+                if (m==1)
+                {
+                    annonce.type = MENTEUR; // c'est ici qu'on determine le type pour l'union
+                }
+                else if (m==0)
+                {
+                        fprintf(stdout, "\nExact ? (0/1)\n");
+                        scanf("%d", &e);
+                        if (e==1)
+                        {
+                            annonce.type = EXACT;  // ou ici
+                        }
+                        else    if (e==0)
+                                {
+                                    annonce.type = MISE;  //ou la
+                                }
+                }
+                else
+                {
+                    fprintf(stdout, "\nAnnonce incorrecte.\n");
+                }
             }
-            switch (annonce.type) {  /* gestion des differentes annonces en fonction des cas */
+
+
+            switch (annonce.type) {  // gestion des differentes annonces en fonction des cas
             case MISE: {
-                Booleen annonce_incorrecte = VRAI; /* pour s'assurer que le joueur fait une annonce correcte */
-                while (annonce_incorrecte) {
-                fprintf(stdout, "\nMise du joueur %s ?\n", joueurs[(joueur_actuel%nb_de_joueurs)].pseudo); /* avec le modulo pour rester entre les differents joueurs */
-                scanf ("%d %d", &annonce.info.mise.nombre, &annonce.info.mise.de);
-                if (premiere_mise) { /* un peu special puisqu'il n'y a pas d'annonce precedente */
-                    if (annonce.info.mise.de > 0 && annonce.info.mise.nombre > 0 && annonce.info.mise.de <7 && annonce.info.mise.nombre < nb_de_des_max) /* pleins de conditions */ {
+                Booleen annonce_incorrecte = VRAI; // pour s'assurer que le joueur fait une annonce correcte
+                while (annonce_incorrecte)
+                {
+                    fprintf(stdout, "\nMise du joueur %s ?\n", joueurs[(joueur_actuel%nb_de_joueurs)].pseudo); // avec le modulo pour rester entre les differents joueurs
+                    scanf ("%d %d", &annonce.info.mise.nombre, &annonce.info.mise.de);
+                    if (premiere_mise) { // un peu special puisqu'il n'y a pas d'annonce precedente
+                    if (annonce.info.mise.de > 0 && annonce.info.mise.nombre > 0 && annonce.info.mise.de <7 && annonce.info.mise.nombre < nb_de_des_max)
+                    { // pleins de conditions  {
                     annonce_precedente.info.mise.nombre = annonce.info.mise.nombre;
                     annonce_precedente.info.mise.de = annonce.info.mise.de;
                     fprintf(stdout, "Le joueur %s a mise : %d %d", joueurs[(joueur_actuel%nb_de_joueurs)].pseudo, annonce.info.mise.nombre, annonce.info.mise.de);
-                    joueur_actuel++; /* on passe au joueur suivant */
-                    premiere_mise = FAUX; /* la premiere mise est faite */
-                    annonce_incorrecte = FAUX; /* les conditions sont la pour ca */
+                    joueur_actuel++; // on passe au joueur suivant
+                    premiere_mise = FAUX; // la premiere mise est faite
+                    annonce_incorrecte = FAUX; // les conditions sont la pour ca
                     }
-                    else { fprintf(stdout, "\nAnnonce incorrecte.\n"); }
-                }
+                    else
+                    { fprintf(stdout, "\nAnnonce incorrecte.\n"); }
+                    }
+
                 else {
                 if (annonce.info.mise.de > 0 && annonce.info.mise.nombre > 0 && annonce.info.mise.de <7 && annonce.info.mise.nombre <= nb_de_des_max
                     && ((annonce.info.mise.nombre == annonce_precedente.info.mise.nombre && annonce.info.mise.de > annonce_precedente.info.mise.de && annonce_precedente.info.mise.de != 1)
                     || (annonce.info.mise.nombre > annonce_precedente.info.mise.nombre && annonce.info.mise.de == annonce_precedente.info.mise.de)
                     || (annonce.info.mise.de == 1 && annonce.info.mise.nombre >= (annonce_precedente.info.mise.nombre+1)/2 && annonce_precedente.info.mise.de != 1)
-                    || (annonce_precedente.info.mise.de == 1 && annonce.info.mise.nombre >= annonce_precedente.info.mise.nombre*2 +1))) /* pleins pleins pleins de conditions */ {
+                    || (annonce_precedente.info.mise.de == 1 && annonce.info.mise.nombre >= annonce_precedente.info.mise.nombre*2 +1))) // pleins pleins pleins de conditions
+                {
                     annonce_precedente.info.mise.nombre = annonce.info.mise.nombre;
                     annonce_precedente.info.mise.de = annonce.info.mise.de;
                     fprintf(stdout, "\nLe joueur %s a mise : %d %d\n", joueurs[(joueur_actuel%nb_de_joueurs)].pseudo, annonce.info.mise.nombre, annonce.info.mise.de);
@@ -151,74 +238,78 @@ void partie(SDL_Surface * fond) {
             case MENTEUR: {
                 if (annonce_precedente.info.mise.de != 1) {
                 for (i=0;i<nb_de_joueurs;i++) {
-                    somme += joueurs[i].des[annonce_precedente.info.mise.de -1] + joueurs[i].des[0]; /* on calcule pour verifier si il y a mensonge ou pas */
+                    somme += joueurs[i].des[annonce_precedente.info.mise.de -1] + joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
                 }
                 }
                 else {
                 for (i=0;i<nb_de_joueurs;i++) {
-                    somme += joueurs[i].des[0]; /* on calcule pour verifier si il y a mensonge ou pas */
+                    somme += joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
                 }
                 }
                 fprintf(stdout, "\nIl y a %d %d au total.\n", somme, annonce_precedente.info.mise.de);
                 if (somme<annonce_precedente.info.mise.nombre) {
-                    joueurs[(joueur_actuel-1)%nb_de_joueurs].nb_de_des--; /* le joueur qui a fait la derniere annonce perd un de */
-                    fprintf(stdout, "\nMenteur !\n"); /* c'est pas bien de mentir */
-                    joueur_actuel = (joueur_actuel-1)%nb_de_joueurs; /* on recommence le tour suivant a partir du joueur precedent */
+                    joueurs[(joueur_actuel-1)%nb_de_joueurs].nb_de_des--; // le joueur qui a fait la derniere annonce perd un de
+                    fprintf(stdout, "\nMenteur !\n"); // c'est pas bien de mentir
+                    joueur_actuel = (joueur_actuel-1)%nb_de_joueurs; // on recommence le tour suivant a partir du joueur precedent
                 }
                 else {
-                    joueurs[joueur_actuel%nb_de_joueurs].nb_de_des--; /* c'est le joueur actuel qui perd un de, et c'est lui qui fait la premiere mise au tour suivant */
+                    joueurs[joueur_actuel%nb_de_joueurs].nb_de_des--; // c'est le joueur actuel qui perd un de, et c'est lui qui fait la premiere mise au tour suivant
                     fprintf(stdout, "\nEh non, le compte y est !\n");
                 }
-                nb_de_des_max--; /* globalement, il y a un de en moins (merci Captain Obvious) */
-                tour_de_jeu = FAUX; /* fin du tour de jeu */
+                nb_de_des_max--; // globalement, il y a un de en moins (merci Captain Obvious)
+                tour_de_jeu = FAUX; // fin du tour de jeu
                 break;
             }
             case EXACT: {
                 if (annonce_precedente.info.mise.de != 1) {
                 for (i=0;i<nb_de_joueurs;i++) {
-                    somme += joueurs[i].des[annonce_precedente.info.mise.de -1] + joueurs[i].des[0]; /* on calcule pour verifier si il y a mensonge ou pas */
+                    somme += joueurs[i].des[annonce_precedente.info.mise.de -1] + joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
                 }
                 }
                 else {
                 for (i=0;i<nb_de_joueurs;i++) {
-                    somme += joueurs[i].des[0]; /* on calcule pour verifier si il y a mensonge ou pas */
+                    somme += joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
                 }
                 }
                 fprintf(stdout, "\nIl y a %d %d au total.\n", somme, annonce_precedente.info.mise.de);
                 if (somme==annonce_precedente.info.mise.nombre) {
-                    fprintf(stdout, "\nGG, y'a que ca qui marche à ce jeu là.\n"); /* on ne le dira jamais assez */
+                    fprintf(stdout, "\nGG, y'a que ca qui marche à ce jeu là.\n"); // on ne le dira jamais assez
                     if (joueurs[joueur_actuel%nb_de_joueurs].nb_de_des <5) {
-                        joueurs[joueur_actuel%nb_de_joueurs].nb_de_des++; /* le joueur regagne un de, si il en avait moins de 5 */
-                        nb_de_des_max++; /* ca fait augmenter le nombre de des ! */
+                        joueurs[joueur_actuel%nb_de_joueurs].nb_de_des++; // le joueur regagne un de, si il en avait moins de 5
+                        nb_de_des_max++; // ca fait augmenter le nombre de des !
                     }
                 }
                 else {
-                    fprintf(stdout, "\nDommage, ce n'est pas exact.\n"); /* Regle 2 : c'est toujours exact, sauf quand ca l'est pas */
-                    joueurs[joueur_actuel%nb_de_joueurs].nb_de_des--; /* cette fois le joueur perd un de */
-                    nb_de_des_max--; /* ...et du coup le nombre de des total diminue */
+                    fprintf(stdout, "\nDommage, ce n'est pas exact.\n"); // Regle 2 : c'est toujours exact, sauf quand ca l'est pas
+                    joueurs[joueur_actuel%nb_de_joueurs].nb_de_des--; // cette fois le joueur perd un de
+                    nb_de_des_max--; // ...et du coup le nombre de des total diminue
                 }
-                tour_de_jeu = FAUX; /* fin du tour de jeu aussi */
+                tour_de_jeu = FAUX; // fin du tour de jeu aussi
                 break;
             }
             default: {
-                fprintf(stdout, "\nAnnonce incorrecte.\n"); /* juste parce qu'il faut mettre un "default" */
+                fprintf(stdout, "\nAnnonce incorrecte.\n"); // juste parce qu'il faut mettre un "default"
             }
 
-            } /* cette accolade est pour la fin du switch */
+            } // cette accolade est pour la fin du switch
 
-        } /* la on sort de la boucle secondaire */
-        premier_tour = FAUX; /* a ce stade la le premier tour est fini */
+        } // la on sort de la boucle secondaire
+        premier_tour = FAUX; // a ce stade la le premier tour est fini
         for (i=0;i<nb_de_joueurs;i++) {
             if (joueurs[i].nb_de_des==0) {
-                continuer = FAUX; /* si un joueur tombe a 0 de, la partie s'arrete */
+                continuer = FAUX; // si un joueur tombe a 0 de, la partie s'arrete
                 fprintf(stdout, "\nLe joueur %s est elimine.", joueurs[i].pseudo);
             }
         }
-        if (continuer) fprintf(stdout, "\nNouveau tour de jeu :\n"); /* sinon on continue */
-    } /* sortie de la boucle principale */
+        if (continuer) fprintf(stdout, "\nNouveau tour de jeu :\n"); // sinon on continue
+    } // sortie de la boucle principale
     free(joueurs);
+    SDL_FreeSurface(champSaisie);
+    SDL_FreeSurface(texteAffiche);
     TTF_CloseFont(policeSaisie);
-} /* fin de la procédure */
+    TTF_CloseFont(policeAffichage);
+    return EXIT_SUCCESS;
+} // fin de la procédure
 
 
 
@@ -233,6 +324,9 @@ void partie(SDL_Surface * fond) {
 
 void klik(SDL_Surface * fond)
 {
+
+SDL_Color couleurNoire = { 0,0,0 } ;
+
     TTF_Font *policePerudo = NULL;
     if ((policePerudo = TTF_OpenFont("../../Documents/arcadeclassic.ttf", ((fond->w)/15)))==NULL)
     {
@@ -240,8 +334,6 @@ void klik(SDL_Surface * fond)
         fprintf(stderr,"Quelque chose cloche... Avez vous la police arcadeclassic.ttf ?");
         exit(EXIT_FAILURE);
     }
-    SDL_Color couleurNoire = { 0,0,0 } ;
-    SDL_Color couleurVerte = { 10,180,30};
     SDL_Surface *R1 = NULL, *R2 = NULL, *R3 = NULL, *R4 = NULL, *R5 = NULL, *R6 = NULL;
     SDL_Rect posR1, posR2, posR3, posR4, posR5, posR6;
 
