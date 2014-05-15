@@ -130,9 +130,8 @@ int saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * p
                     switch(event.key.keysym.sym)
                     {
                         case SDLK_ESCAPE:   //on force la sortie
-                          continuer = FAUX;
-                          if (longueur==0)
-                            longueur =1;
+                            free(texteEntre);
+                            return EXIT_FAILURE;
                         break;
                         case SDLK_DELETE:   //on supprime le caractère précédent
                             if (longueur > 0)
@@ -217,4 +216,60 @@ void recupInfos (int * resolution, couleurDes * couleur)
         (*couleur) = strtol((fgets(tampon,5,fconfig)),NULL,10); // Le chiffre donne directement la couleur, car couleurDes est un type énum
        //DEBUG fprintf(stdout,"abwa res = %d et couleur = %d\n",resolution,couleur);
     }
+}
+
+void conversionCouleur(char * nom, couleurDes couleur)
+{
+    switch (couleur)
+    {
+        case rouge:
+            nom[0] = 'r';
+            nom[1] = 'o';
+            nom[2] = 'u';
+            nom[3] = 'g';
+            nom[4] = 'e';
+            nom[5] = '\0';
+        break;
+        case vert:
+            nom[0] = 'v';
+            nom[1] = 'e';
+            nom[2] = 'r';
+            nom[3] = 't';
+            nom[4] = '\0';
+        break;
+        case bleu :
+            nom[0] = 'b';
+            nom[1] = 'l';
+            nom[2] = 'e';
+            nom[3] = 'u';
+            nom[4] = '\0';
+        break;
+        case jaune :
+            nom[0] = 'j';
+            nom[1] = 'a';
+            nom[2] = 'u';
+            nom[3] = 'n';
+            nom[4] = 'e';
+            nom[5] = '\0';
+        break;
+        case violet :
+            nom[0] = 'v';
+            nom[1] = 'i';
+            nom[2] = 'o';
+            nom[3] = 'l';
+            nom[4] = 'e';
+            nom[5] = 't';
+            nom[6] = '\0';
+        break;
+        case orange :
+            nom[0] = 'o';
+            nom[1] = 'r';
+            nom[2] = 'a';
+            nom[3] = 'n';
+            nom[4] = 'g';
+            nom[5] = 'e';
+            nom[6] = '\0';
+        break;
+    }
+    fprintf(stdout,"\n%s\n\n",nom);
 }

@@ -56,4 +56,6 @@ int longueur_mot(char * mot);
 int saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * police, SDL_Color couleurPolice, SDL_Color couleurFond, char * mot, int longueur_max, SDL_Surface * fond);
 
 void recupInfos (int * resolution, couleurDes * couleur);
+
+void conversionCouleur(char * nom, couleurDes couleur) ;
 #endif

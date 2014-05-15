@@ -26,3 +26,15 @@ doxygen :
 
 clean : Perudo
 	rm -f perudo.o menu.o jeu.o PerudUtils.o
+
+serveur : testServeur.o PerudUtils.o
+	$(CC) $(CFLAGS) testServeur.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o Serveur
+
+testServeur.o : testServeur.c
+	$(CC) $(CFLAGS) -I$(PHEADERS) -c testServeur.c
+
+client : testClient.o PerudUtils.o
+	$(CC) $(CFLAGS) testClient.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o Client
+
+testClient.o : testClient.c
+	$(CC) $(CFLAGS) -I$(PHEADERS) -c testClient.c

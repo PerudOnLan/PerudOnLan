@@ -177,6 +177,7 @@ while(!quitter)
                     }
                     if (estDans(event,boutonRejoindre,positionRejoindre))
                     {
+                        interface(fond,4) ;
                         continuer = FAUX;
                         quitter = VRAI;
                     }
