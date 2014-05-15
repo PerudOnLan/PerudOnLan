@@ -76,7 +76,7 @@ SDL_Color couleurViolette = {150,0,150};
         //on définit le nombre de joueurs
         int nb_de_joueurs;
 
-        texteAffiche = TTF_RenderText_Solid(policeAffichage,"NOMBRE DE JOUEURS",couleurNoire);
+        texteAffiche = TTF_RenderText_Solid(policeAffichage,"NOMBRE DE JOUEURS ?",couleurNoire);
         positionTexte.x = (fond->w)/2 - ((texteAffiche->w)/2);
         positionTexte.y = (positionChamp.y) - (texteAffiche->h);
         SDL_BlitSurface(texteAffiche,NULL,fond,&positionTexte);
@@ -93,7 +93,7 @@ SDL_Color couleurViolette = {150,0,150};
             return EXIT_FAILURE;
         }
         nb_de_joueurs= strtol(tampon,NULL,10);
-    } while (nb_de_joueurs<=0 || nb_de_joueurs>6) ;
+    } while (nb_de_joueurs<2 || nb_de_joueurs>6) ;
 
     Joueur * joueurs=NULL; // les joueurs sont representes par un tableau
     if ((joueurs = malloc(nb_de_joueurs * (sizeof(Joueur))))==NULL)
@@ -121,20 +121,23 @@ SDL_Color couleurViolette = {150,0,150};
         texteAffiche = TTF_RenderText_Solid(policeAffichage,texte,couleurNoire);
         positionTexte.x = (fond->w)/2 - ((texteAffiche->w)/2);
 
-        printf("ca %s ca\n", joueurs[i].pseudo);
-
         SDL_FillRect(fond,NULL,VERT);
         SDL_Flip(fond);
         SDL_BlitSurface(champSaisie,NULL,fond,&positionChamp);
         SDL_BlitSurface(texteAffiche,NULL,fond,&positionTexte);
         SDL_Flip(fond);
-        if ((saisir(champSaisie,positionChamp,VIOLET,policeSaisie,couleurBlanche,couleurViolette,joueurs[i].pseudo,TAILLE_MAX,fond))==EXIT_FAILURE)
-        {
-            //ici, l'arrêt brutal de la  saisie signifie qu'on veut arrêter totalement le jeu
-            return EXIT_FAILURE;
-        }
 
+        while ((longueur_mot(joueurs[i].pseudo))==0)
+        {
+            if ((saisir(champSaisie,positionChamp,VIOLET,policeSaisie,couleurBlanche,couleurViolette,joueurs[i].pseudo,TAILLE_MAX,fond))==EXIT_FAILURE)
+            {
+                //ici, l'arrêt brutal de la  saisie signifie qu'on veut arrêter totalement le jeu
+                return EXIT_FAILURE;
+            }
+
+        }
     }
+
     Booleen premier_tour = VRAI; // pour l'initialisation
     while (continuer)  // la boucle principale, jusqu'a elimination d'un joueur
     {
@@ -261,36 +264,30 @@ SDL_Color couleurViolette = {150,0,150};
                 }
                 case MENTEUR:
                 {
-                    if (annonce_precedente.info.mise.de != 1)
-                    {
-                        for (i=0;i<nb_de_joueurs;i++)
-                        {
-                            somme += joueurs[i].des[annonce_precedente.info.mise.de -1] + joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
-                        }
-                    }
-                    else
-                    {
-                        for (i=0;i<nb_de_joueurs;i++)
-                        {
-                            somme += joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
-                        }
-                    }
-                    fprintf(stdout, "\nIl y a %d %d au total.\n", somme, annonce_precedente.info.mise.de);
-                    if (somme<annonce_precedente.info.mise.nombre)
-                    {
-                        joueurs[(joueur_actuel-1)%nb_de_joueurs].nb_de_des--; // le joueur qui a fait la derniere annonce perd un de
-                        fprintf(stdout, "\nMenteur !\n"); // c'est pas bien de mentir
-                        joueur_actuel = (joueur_actuel-1)%nb_de_joueurs; // on recommence le tour suivant a partir du joueur precedent
-                    }
-                    else
-                    {
-                        joueurs[joueur_actuel%nb_de_joueurs].nb_de_des--; // c'est le joueur actuel qui perd un de, et c'est lui qui fait la premiere mise au tour suivant
-                        fprintf(stdout, "\nEh non, le compte y est !\n");
-                    }
-                    nb_de_des_max--; // globalement, il y a un de en moins (merci Captain Obvious)
-                    tour_de_jeu = FAUX; // fin du tour de jeu
-                    break;
+                if (annonce_precedente.info.mise.de != 1) {
+                for (i=0;i<nb_de_joueurs;i++) {
+                    somme += joueurs[i].des[annonce_precedente.info.mise.de -1] + joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
                 }
+                }
+                else {
+                for (i=0;i<nb_de_joueurs;i++) {
+                    somme += joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
+                }
+                }
+                fprintf(stdout, "\nIl y a %d %d au total.\n", somme, annonce_precedente.info.mise.de);
+                if (somme<annonce_precedente.info.mise.nombre) {
+                    joueurs[(joueur_actuel-1)%nb_de_joueurs].nb_de_des--; // le joueur qui a fait la derniere annonce perd un de
+                    fprintf(stdout, "\nMenteur !\n"); // c'est pas bien de mentir
+                    joueur_actuel = (joueur_actuel-1)%nb_de_joueurs; // on recommence le tour suivant a partir du joueur precedent
+                }
+                else {
+                    joueurs[joueur_actuel%nb_de_joueurs].nb_de_des--; // c'est le joueur actuel qui perd un de, et c'est lui qui fait la premiere mise au tour suivant
+                    fprintf(stdout, "\nEh non, le compte y est !\n");
+                }
+                nb_de_des_max--; // globalement, il y a un de en moins (merci Captain Obvious)
+                tour_de_jeu = FAUX; // fin du tour de jeu
+                break;
+            }
                 case EXACT:
                 {
                     if (annonce_precedente.info.mise.de != 1)
@@ -569,4 +566,118 @@ SDL_Color couleurNoire = { 0,0,0 } ;
     SDL_FreeSurface(R6);
     SDL_FreeSurface(texteTimer);
     TTF_CloseFont(policePerudo);
+}
+
+/**
+* \fn int interface (int nbJoueurs)
+* \brief aspect de l'interface
+* \param fond le fond d'écran sur lequel s'affiche les choses
+* \param nbJoueurs le nombre de joueurs dans la partie
+* \author Dede
+* \date 10/04
+*/
+int interface (SDL_Surface * fond, int nbJoueurs)
+{
+    couleurDes couleurJoueur = rouge;
+    int resolution = 0;
+    int i, j;
+    recupInfos(&resolution, &couleurJoueur);
+    //Chargement des gobelets
+    SDL_Surface * gob[6];
+
+    for(i=0;i<6;i++)
+    {
+        gob[i] = NULL;
+    }
+
+    char gobeletgrand[50]="../../Documents/Des/gobelet_grand_abwa";
+    char gobeletmoyen[50]="../../Documents/Des/gobelet_moyen_rouge";
+    char gobeletpetit[50]="../../Documents/Des/gobelet_petit_rouge";
+    char couleur[10];
+
+    if (nbJoueurs < 5)  //on ne charge alors que des gobelets moyens et le grand
+    {
+        // Cette partie sert à changer la chaîne pour l'appel de IMG_load
+        conversionCouleur(couleur, couleurJoueur);
+        for (j = 0; j< 7; j++)
+        {
+            gobeletgrand[j+34] = couleur[j];
+        }
+        if ((gob[0] = IMG_Load(gobeletgrand))==NULL)
+            {
+                fprintf(stderr,"impossible de charger l'image du gobelet 1 aka %s", gobeletgrand);
+                gob[i] = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
+            }
+
+        // On change de taille
+        for (i=1; i<nbJoueurs; i++)     //Boucle de remplissage des surfaces gobelets
+        {
+            couleurJoueur ++;
+            couleurJoueur = (couleurJoueur)%6;
+            conversionCouleur(couleur, couleurJoueur);
+            for (j = 0;j<7; j++)
+            {
+                gobeletmoyen[j+34] = couleur[j];
+            }
+            if ((gob[i] = IMG_Load(gobeletmoyen))==NULL)
+            {
+                fprintf(stderr,"impossible de charger l'image du gobelet %d aka %s \n", i, gobeletmoyen);
+                gob[i] = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
+            }
+
+        }
+
+    }
+
+    else
+    {
+    // Cette partie sert à changer la chaîne pour l'appel de IMG_load
+        conversionCouleur(couleur, couleurJoueur);
+        for (j = 0; j< 7; j++)
+        {
+            gobeletgrand[j+34] = couleur[j];
+        }
+        if ((gob[0] = IMG_Load(gobeletgrand))==NULL)
+            {
+                fprintf(stderr,"impossible de charger l'image du gobelet 1 aka %s", gobeletgrand);
+                gob[i] = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
+            }
+
+        // On change de taille
+        couleurJoueur ++;
+        couleurJoueur = (couleurJoueur)%6;
+        conversionCouleur(couleur, couleurJoueur);
+        for (j = 0;j<7; j++)
+        {
+            gobeletmoyen[j+34] = couleur[j];
+        }
+        if ((gob[i] = IMG_Load(gobeletmoyen))==NULL)
+        {
+            fprintf(stderr,"impossible de charger l'image du gobelet %d aka %s \n", i, gobeletmoyen);
+            gob[i] = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
+        }
+
+    /**
+    TODO
+    */
+    }
+/*    // Définition des positions des gobelets
+    SDL_Rect pos1, pos2, pos3, pos4, pos5, pos6;
+
+    pos1.x = ((fond->w)/2) -
+
+    if (nbJoueurs < 5)
+    {
+
+
+    }
+*/
+
+FE_WaitEvent(NULL);
+for (i=0; i<6; i++)
+{
+SDL_FreeSurface(gob[i]);
+}
+
+return EXIT_SUCCESS;
 }
