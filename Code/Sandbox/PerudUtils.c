@@ -218,7 +218,19 @@ void recupInfos (int * resolution, couleurDes * couleur)
     }
 }
 
-void conversionCouleur(char * nom, couleurDes couleur)
+/**
+* \fn void conversionCouleur (char * nom, char * lettreCouleur, couleurDes * couleur)
+* \brief transforme l'entier couleurDes en une chaine de caractère
+* \param nom la chaine de caractères à remplir
+* \param &lettreCouleur l'adresse du caractère à changer
+* \author Dede
+* \date 3/05
+*
+* On a souvent besoin de récupérer les options que le joueur a choisies, d'où la création de cette fonction
+*
+*/
+
+void conversionCouleur(char * nom, char * lettreCouleur, couleurDes couleur)
 {
     switch (couleur)
     {
@@ -271,5 +283,29 @@ void conversionCouleur(char * nom, couleurDes couleur)
             nom[6] = '\0';
         break;
     }
-    fprintf(stdout,"\n%s\n\n",nom);
+    if(lettreCouleur != NULL) //il est possible qu'on ne veuille pas de la lettre, auquel cas on appelle la fonction avec NULL en deuxième paramètre
+    {
+    switch(couleur)
+        {
+            case rouge:
+            (*lettreCouleur) = 'R';
+            break;
+            case vert:
+            (*lettreCouleur) = 'V';
+            break;
+            case bleu:
+            (*lettreCouleur) = 'B';
+            break;
+            case jaune:
+            (*lettreCouleur) = 'J';
+            break;
+            case orange:
+            (*lettreCouleur) = 'O';
+            break;
+            case violet:
+            (*lettreCouleur) = 'P';
+            break;
+        }
+    }
 }
+

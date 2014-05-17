@@ -177,9 +177,32 @@ while(!quitter)
                     }
                     if (estDans(event,boutonRejoindre,positionRejoindre))
                     {
-                        interface(fond,4) ;
+                        SDL_Surface ** gobelets = NULL;
+                        SDL_Surface ** desReference = NULL;
+                        SDL_Rect * positions = NULL;
+                        if ((gobelets = malloc(6 * (sizeof(SDL_Surface))))==NULL)
+                        {
+                            perror("malloc");
+                            exit(EXIT_FAILURE);
+                        }
+                        if ((desReference = malloc(6 * (sizeof(SDL_Surface))))==NULL)
+                        {
+                            perror("malloc");
+                            exit(EXIT_FAILURE);
+                        }
+                        if ((positions = malloc(6 * (sizeof(SDL_Rect))))==NULL)
+                        {
+                            perror("malloc");
+                            exit(EXIT_FAILURE);
+                        }
+
+                        init_graphique(6,gobelets,desReference) ;
+                        interface(fond,6,gobelets,positions) ;
+                        melange(fond, 6,gobelets, positions) ;
                         continuer = FAUX;
                         quitter = VRAI;
+                        free(gobelets);
+                        free(desReference);
                     }
                     if  (estDans(event,boutonOptions,positionOptions))
                     {
@@ -318,9 +341,9 @@ SDL_Color couleurBlanche = {255,255,255};
     SDL_Rect posR1, posV1, posB1, posJ1, posP1, posO1, posOutliner;
 
     //affichage dé rouge 1
-    if ((R1 = IMG_Load("../../Documents/Des/R1.png"))==NULL)
+    if ((R1 = IMG_Load("../../Documents/Des/R1G.png"))==NULL)
     {
-        fprintf(stderr,"impossible de charger l'image du dé R1");
+        fprintf(stderr,"impossible de charger l'image du dé R1G");
         R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
     posR1.x = 2*((fond->w)/3) - 80;
@@ -328,9 +351,9 @@ SDL_Color couleurBlanche = {255,255,255};
     SDL_BlitSurface(R1,NULL,fond,&posR1);
 
     //affichage dé vert 1
-    if ((V1 = IMG_Load("../../Documents/Des/V1.png"))==NULL)
+    if ((V1 = IMG_Load("../../Documents/Des/V1G.png"))==NULL)
     {
-        fprintf(stderr,"impossible de charger l'image du dé V1");
+        fprintf(stderr,"impossible de charger l'image du dé V1G");
         V1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
     posV1.x = 2*((fond->w)/3) - 80;
@@ -338,9 +361,9 @@ SDL_Color couleurBlanche = {255,255,255};
     SDL_BlitSurface(V1,NULL,fond,&posV1);
 
     //affichage dé bleu 1
-    if ((B1 = IMG_Load("../../Documents/Des/B1.png"))==NULL)
+    if ((B1 = IMG_Load("../../Documents/Des/B1G.png"))==NULL)
     {
-        fprintf(stderr,"impossible de charger l'image du dé B1");
+        fprintf(stderr,"impossible de charger l'image du dé B1G");
         B1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
     posB1.x = 2*((fond->w)/3) - 80;
@@ -348,9 +371,9 @@ SDL_Color couleurBlanche = {255,255,255};
     SDL_BlitSurface(B1,NULL,fond,&posB1);
 
     //affichage dé jaune 1
-    if ((J1 = IMG_Load("../../Documents/Des/J1.png"))==NULL)
+    if ((J1 = IMG_Load("../../Documents/Des/J1G.png"))==NULL)
     {
-        fprintf(stderr,"impossible de charger l'image du dé J1");
+        fprintf(stderr,"impossible de charger l'image du dé J1G");
         J1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
     posJ1.x = 5*((fond->w)/6) - 80;
@@ -358,9 +381,9 @@ SDL_Color couleurBlanche = {255,255,255};
     SDL_BlitSurface(J1,NULL,fond,&posJ1);
 
     //affichage dé violet 1
-    if ((P1 = IMG_Load("../../Documents/Des/P1.png"))==NULL)
+    if ((P1 = IMG_Load("../../Documents/Des/P1G.png"))==NULL)
     {
-        fprintf(stderr,"impossible de charger l'image du dé P1");
+        fprintf(stderr,"impossible de charger l'image du dé P1G");
         P1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
     posP1.x = 5*((fond->w)/6) - 80;
@@ -368,9 +391,9 @@ SDL_Color couleurBlanche = {255,255,255};
     SDL_BlitSurface(P1,NULL,fond,&posP1);
 
     //affichage dé orange 1
-    if ((O1 = IMG_Load("../../Documents/Des/O1.png"))==NULL)
+    if ((O1 = IMG_Load("../../Documents/Des/O1G.png"))==NULL)
     {
-        fprintf(stderr,"impossible de charger l'image du dé O1");
+        fprintf(stderr,"impossible de charger l'image du dé O1G");
         O1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
     }
     posO1.x = 5*((fond->w)/6) - 80;

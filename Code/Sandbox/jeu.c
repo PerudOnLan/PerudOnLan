@@ -134,9 +134,27 @@ SDL_Color couleurViolette = {150,0,150};
                 //ici, l'arrêt brutal de la  saisie signifie qu'on veut arrêter totalement le jeu
                 return EXIT_FAILURE;
             }
-
         }
     }
+
+    // on initialise l'affichage
+
+
+    SDL_Surface ** gobelets = NULL;
+    SDL_Surface ** desReference = NULL;
+    if ((gobelets = malloc(nb_de_joueurs * (sizeof(SDL_Surface))))==NULL)
+    {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+    if ((desReference = malloc(nb_de_joueurs * (sizeof(SDL_Surface))))==NULL)
+    {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+    init_graphique(nb_de_joueurs, gobelets, desReference); /** lancement de l'initialisation graphique et de l'interface de jeu */
+    interface(fond, nb_de_joueurs, gobelets, desReference);
+
 
     Booleen premier_tour = VRAI; // pour l'initialisation
     while (continuer)  // la boucle principale, jusqu'a elimination d'un joueur
@@ -342,9 +360,16 @@ SDL_Color couleurViolette = {150,0,150};
         }
         if (continuer) fprintf(stdout, "\nNouveau tour de jeu :\n"); // sinon on continue
     } // sortie de la boucle principale
+
+
     free(joueurs);
     SDL_FreeSurface(champSaisie);
     SDL_FreeSurface(texteAffiche);
+    for (i=0; i<6; i++)
+{
+SDL_FreeSurface(gobelets[i]);
+}
+
     TTF_CloseFont(policeSaisie);
     TTF_CloseFont(policeAffichage);
     return EXIT_SUCCESS;
@@ -377,7 +402,7 @@ SDL_Color couleurNoire = { 0,0,0 } ;
     SDL_Rect posR1, posR2, posR3, posR4, posR5, posR6;
 
     //init dé rouge 1
-    if ((R1 = IMG_Load("../../Documents/Des/R1.png"))==NULL)
+    if ((R1 = IMG_Load("../../Documents/Des/R1G.png"))==NULL)
     {
         fprintf(stderr,"impossible de charger l'image du dé R1");
         R1 = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
@@ -566,118 +591,4 @@ SDL_Color couleurNoire = { 0,0,0 } ;
     SDL_FreeSurface(R6);
     SDL_FreeSurface(texteTimer);
     TTF_CloseFont(policePerudo);
-}
-
-/**
-* \fn int interface (int nbJoueurs)
-* \brief aspect de l'interface
-* \param fond le fond d'écran sur lequel s'affiche les choses
-* \param nbJoueurs le nombre de joueurs dans la partie
-* \author Dede
-* \date 10/04
-*/
-int interface (SDL_Surface * fond, int nbJoueurs)
-{
-    couleurDes couleurJoueur = rouge;
-    int resolution = 0;
-    int i, j;
-    recupInfos(&resolution, &couleurJoueur);
-    //Chargement des gobelets
-    SDL_Surface * gob[6];
-
-    for(i=0;i<6;i++)
-    {
-        gob[i] = NULL;
-    }
-
-    char gobeletgrand[50]="../../Documents/Des/gobelet_grand_abwa";
-    char gobeletmoyen[50]="../../Documents/Des/gobelet_moyen_rouge";
-    char gobeletpetit[50]="../../Documents/Des/gobelet_petit_rouge";
-    char couleur[10];
-
-    if (nbJoueurs < 5)  //on ne charge alors que des gobelets moyens et le grand
-    {
-        // Cette partie sert à changer la chaîne pour l'appel de IMG_load
-        conversionCouleur(couleur, couleurJoueur);
-        for (j = 0; j< 7; j++)
-        {
-            gobeletgrand[j+34] = couleur[j];
-        }
-        if ((gob[0] = IMG_Load(gobeletgrand))==NULL)
-            {
-                fprintf(stderr,"impossible de charger l'image du gobelet 1 aka %s", gobeletgrand);
-                gob[i] = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
-            }
-
-        // On change de taille
-        for (i=1; i<nbJoueurs; i++)     //Boucle de remplissage des surfaces gobelets
-        {
-            couleurJoueur ++;
-            couleurJoueur = (couleurJoueur)%6;
-            conversionCouleur(couleur, couleurJoueur);
-            for (j = 0;j<7; j++)
-            {
-                gobeletmoyen[j+34] = couleur[j];
-            }
-            if ((gob[i] = IMG_Load(gobeletmoyen))==NULL)
-            {
-                fprintf(stderr,"impossible de charger l'image du gobelet %d aka %s \n", i, gobeletmoyen);
-                gob[i] = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
-            }
-
-        }
-
-    }
-
-    else
-    {
-    // Cette partie sert à changer la chaîne pour l'appel de IMG_load
-        conversionCouleur(couleur, couleurJoueur);
-        for (j = 0; j< 7; j++)
-        {
-            gobeletgrand[j+34] = couleur[j];
-        }
-        if ((gob[0] = IMG_Load(gobeletgrand))==NULL)
-            {
-                fprintf(stderr,"impossible de charger l'image du gobelet 1 aka %s", gobeletgrand);
-                gob[i] = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
-            }
-
-        // On change de taille
-        couleurJoueur ++;
-        couleurJoueur = (couleurJoueur)%6;
-        conversionCouleur(couleur, couleurJoueur);
-        for (j = 0;j<7; j++)
-        {
-            gobeletmoyen[j+34] = couleur[j];
-        }
-        if ((gob[i] = IMG_Load(gobeletmoyen))==NULL)
-        {
-            fprintf(stderr,"impossible de charger l'image du gobelet %d aka %s \n", i, gobeletmoyen);
-            gob[i] = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
-        }
-
-    /**
-    TODO
-    */
-    }
-/*    // Définition des positions des gobelets
-    SDL_Rect pos1, pos2, pos3, pos4, pos5, pos6;
-
-    pos1.x = ((fond->w)/2) -
-
-    if (nbJoueurs < 5)
-    {
-
-
-    }
-*/
-
-FE_WaitEvent(NULL);
-for (i=0; i<6; i++)
-{
-SDL_FreeSurface(gob[i]);
-}
-
-return EXIT_SUCCESS;
 }

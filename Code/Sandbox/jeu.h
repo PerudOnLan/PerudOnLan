@@ -19,6 +19,7 @@
 #include "fastevents.h"
 #include "PerudUtils.h"
 #include "couleurs.h"
+#include "graphics.h"
 
 typedef enum {MISE, MENTEUR, EXACT} Type;
 
@@ -44,6 +45,5 @@ int partie (SDL_Surface * fond);
 
 void klik(SDL_Surface * fond);
 
-int interface (SDL_Surface * fond, int nbJoueurs);
 
 #endif

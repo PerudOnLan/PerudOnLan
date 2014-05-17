@@ -57,5 +57,5 @@ int saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * p
 
 void recupInfos (int * resolution, couleurDes * couleur);
 
-void conversionCouleur(char * nom, couleurDes couleur) ;
+void conversionCouleur(char * nom, char * lettreCouleur, couleurDes couleur) ;
 #endif
