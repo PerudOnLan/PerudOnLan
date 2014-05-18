@@ -1,3 +1,13 @@
+/**
+* \file ia.c
+* \brief code de l'ia
+* \author Artus, François
+* \version 0.2
+* \date 08/04
+*
+* Fichier contenant le code de l'ia : son comportement lors d'une phase de jeu.
+*
+*/
 #include "ia.h"
 
 int main()
@@ -5,7 +15,12 @@ int main()
 return 0;
 }
 
-
+/**
+* \fn int d5 ()
+* \brief Lancement d'un de a 5 faces
+* \author Artus
+* \date 07/04
+*/
 int d5 () {
 
     srand(time(NULL)) ;
@@ -15,6 +30,16 @@ int d5 () {
 
 
 
+/**
+* \fn int nombreValeurProbable(int valeur, int nbT, int nbDe, int des[6])
+* \brief Calcul d'un nombre probable des dés présents en jeu
+* \param valeur la valeur du dé dont on veut connaitre le nombre probable en jeu
+* \param nbT nombre total de dés en jeu
+* \param nbDe nombre de dés de l'ia
+* \param des[6] les valeurs des dés de l'ia
+* \author Artus
+* \date 07/04
+*/
 
 int nombreValeurProbable(int valeur, int nbT, int nbDe, int des[6]) {
 
@@ -29,7 +54,13 @@ int nombreValeurProbable(int valeur, int nbT, int nbDe, int des[6]) {
 }
 
 
-
+/**
+* \fn int plusOuMoins (int nbT)
+* \brief Renvoie un nombre qui modifie le comportement de l'ia et le rend moins prévisible
+* \param nbT nombre total de dés en jeu
+* \author Artus
+* \date 07/04
+*/
 int plusOuMoins (int nbT) {
 
     if ( (nbT>0) && (nbT<=15) ) {
@@ -79,7 +110,15 @@ int plusOuMoins (int nbT) {
 
 
 
-
+/**
+* \fn void valeurLePlus (int des[6], int *pNombre, int *pValeur, int valeur_precedente, int nb_de_des)
+* \brief Ce que l'ia peut jouer en prenant le moins de risques
+* \param des[6] les valeurs des dés de l'ia
+* \param valeur_precedente la valeur qui a été pariée avant
+* \param nb_de_des le nombre de dés en jeu
+* \author Artus
+* \date 07/04
+*/
 void valeurLePlus (int des[6], int *pNombre, int *pValeur, int valeur_precedente, int nb_de_des) {
 
     *pNombre = des[1];
@@ -87,7 +126,7 @@ void valeurLePlus (int des[6], int *pNombre, int *pValeur, int valeur_precedente
     int i;
     for (i=2;i<6;i++) {
 
-        if (des[i] >= *pNombre) {
+        if (des[i] + des[0] >= *pNombre) {
             *pNombre = des[i] + des[0];
             *pValeur = i+1 ;
         }
@@ -100,7 +139,12 @@ void valeurLePlus (int des[6], int *pNombre, int *pValeur, int valeur_precedente
 }
 
 
-
+/**
+* \fn Joueur creerIa ()
+* \brief Création d'une ia
+* \author Artus
+* \date 07/04
+*/
 Joueur creerIa () {
 
     srand(time(NULL));
@@ -118,7 +162,14 @@ Joueur creerIa () {
 
 
 
-
+/**
+* \fn Annonce cerveauIA (Annonce annonce_precedente, int des[6])
+* \brief Le cerveau de l'ia : son comportement quand elle doit faire une annonce
+* \param annonce_precedente l'annonce du joueur précédent
+* \param des[6] les valeurs des dés de l'ia
+* \author Artus, François
+* \date 08/04
+*/
 Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
 
     if (annonce_precedente.type != MISE) {

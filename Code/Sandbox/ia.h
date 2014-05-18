@@ -1,3 +1,10 @@
+/**
+* \file ia.h
+* \brief code de l'ia
+* \author Artus, François
+* \version 0.2
+* \date 08/04
+*/
 #ifndef _IA_H
 #define _IA_H
 
