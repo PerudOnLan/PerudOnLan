@@ -32,6 +32,30 @@ typedef enum
 } Booleen;
 
 /**
+*\enum Type
+* \brief Type d'annonce
+*/
+typedef enum {MISE, MENTEUR, EXACT, ANNONCE_INVALIDE} Type;
+
+/**
+*\struct Annonce
+*\brief les différents genre d'annonce
+*
+*/
+
+typedef struct {
+    Type type;
+    union {
+    struct {
+        int nombre;
+        int de;
+    } mise;
+        Booleen menteur;
+        Booleen exact;
+    } info;
+} Annonce;
+
+/**
 * \enum couleurDes
 * \brief les couleurs de dés
 *

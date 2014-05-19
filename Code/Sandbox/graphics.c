@@ -153,64 +153,213 @@ return EXIT_SUCCESS;
 
 /**
 * \fn int interface (SDL_Surface * fond , int nbJoueurs, SDL_Surface ** gob)
-* \brief aspect de l'interface
+* \brief aspect de l'interface, avec boutons cliquables
 * \param fond le fond d'écran sur lequel s'affiche les choses
 * \param nbJoueurs le nombre de joueurs dans la partie
 * \param gob, le tableau des gobelets
 * \param positions, le tableau des positions des gobelets
+* \return annonce, l'annonce faite par le joueur
 * \author Dede
 * \date 10/04
 */
-int interface (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect * positions)
+Annonce interface (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect * positions)
 {
+    Booleen quitter = FAUX;
+   TTF_Font *policePerudo = NULL;
+    if ((policePerudo = TTF_OpenFont("../../Documents/policePerudo.ttf", (fond->w)/20))==NULL)
+        {
+         SDL_GetError();
+         fprintf(stderr,"Quelque chose cloche... Avez vous la police policePerudo.ttf ?");
+         exit(EXIT_FAILURE);
+        }
 
-SDL_Event event;
+    SDL_Color couleurNoire = { 0,0,0 } ;
+    SDL_Color couleurRouge = { 200,0,0};
 
-    // Définition des positions des gobelets
-    SDL_Rect pos1; // pos2, pos3, pos4, pos5, pos6;
+    Annonce annonce;
+    //par défaut l'annonce est invalide
+    annonce.type = ANNONCE_INVALIDE;
 
-    pos1.x = ((fond->w)/2);
-    pos1.y = ((fond)->h)/2;
+while (1)
+    {
+    Booleen continuer = VRAI;
+    SDL_FillRect(fond, NULL,VERT);
+    SDL_Event event;
 
-/* Affichage de debug, qui marche */
-SDL_FillRect(fond, NULL,VERT);
-SDL_BlitSurface((gob[0]),NULL,fond,&pos1);
-SDL_Flip(fond);
-FE_WaitEvent(&event);
+    // position des boutons
+    SDL_Surface * boutonMise;
+    SDL_Surface * boutonMenteur;
+    SDL_Surface * boutonExact;
+    SDL_Rect positionMise, positionMenteur, positionExact;
 
-SDL_FillRect(fond, NULL,VERT);
-SDL_BlitSurface((gob[1]),NULL,fond,&pos1);
-SDL_Flip(fond);
-FE_WaitEvent(&event);
+    positions[0].x = (((fond->w)/2)-(((gob[0])->w)/2));
+    positions[0].y = ((4*((fond->h)/5))-(((gob[0])->h)/2));
+    SDL_BlitSurface((gob[0]),NULL,fond,&(positions[0]));
 
-SDL_FillRect(fond, NULL,VERT);
-SDL_BlitSurface((gob[2]),NULL,fond,&pos1);
-SDL_Flip(fond);
-FE_WaitEvent(&event);
+// affichage des gobelets
+    switch(nbJoueurs)
+    {
+        case 2:
+        positions[1].x = (((fond->w)/2)-(((gob[1])->w)/2));
+        positions[1].y = (((fond->h)/4)-(((gob[1])->w)/2));
+        SDL_BlitSurface((gob[1]),NULL,fond,&(positions[1]));
 
-SDL_FillRect(fond, NULL,VERT);
-SDL_BlitSurface((gob[3]),NULL,fond,&pos1);
-SDL_Flip(fond);
-FE_WaitEvent(&event);
+        break;
 
-SDL_FillRect(fond, NULL,VERT);
-SDL_BlitSurface((gob[4]),NULL,fond,&pos1);
-SDL_Flip(fond);
-FE_WaitEvent(&event);
+        case 3:
+        positions[1].x = (5*((fond->w)/6)-(((gob[1])->w)/2));
+        positions[1].y = (((fond->h)/4)-(((gob[1])->w)/2));
+        SDL_BlitSurface((gob[1]),NULL,fond,&(positions[1]));
 
-SDL_FillRect(fond, NULL,VERT);
-SDL_BlitSurface((gob[5]),NULL,fond,&pos1);
-SDL_Flip(fond);
-FE_WaitEvent(&event);
 
-int indice;
-for (indice = 0; indice < nbJoueurs; indice ++)
-{
-    positions[indice].x = ((fond->w)/2);
-    positions[indice].y = ((fond->h)/2);
-}
+        positions[2].x = (((fond->w)/6)-(((gob[2])->w)/2));
+        positions[2].y = (((fond->h)/4)-(((gob[2])->w)/2));
+        SDL_BlitSurface((gob[2]),NULL,fond,&(positions[2]));
 
-return EXIT_SUCCESS;
+        break;
+
+        case 4:
+        positions[1].x = (5*((fond->w)/6)-(((gob[1])->w)/2));
+        positions[1].y = (((fond->h)/2)-(((gob[1])->w)/2));
+        SDL_BlitSurface((gob[1]),NULL,fond,&(positions[1]));
+
+
+        positions[2].x = (((fond->w)/2)-(((gob[2])->w)/2));
+        positions[2].y = (((fond->h)/6)-(((gob[2])->w)/2)) -50;
+        SDL_BlitSurface((gob[2]),NULL,fond,&(positions[2]));
+
+
+        positions[3].x = (((fond->w)/6)-(((gob[3])->w)/2));
+        positions[3].y = (((fond->h)/2)-(((gob[3])->w)/2));
+        SDL_BlitSurface((gob[3]),NULL,fond,&(positions[3]));
+
+        break;
+
+        case 5:
+        positions[1].x = (5*((fond->w)/6)-(((gob[1])->w)/2));
+        positions[1].y = (3*((fond->h)/5)-(((gob[1])->w)/2));
+        SDL_BlitSurface((gob[1]),NULL,fond,&(positions[1]));
+
+
+        positions[2].x = (5*((fond->w)/6)-(((gob[2])->w)/2));
+        positions[2].y = (((fond->h)/5)-(((gob[2])->w)/2)) -50;
+        SDL_BlitSurface((gob[2]),NULL,fond,&(positions[2]));
+
+
+        positions[3].x = (((fond->w)/6)-(((gob[3])->w)/2));
+        positions[3].y = (((fond->h)/5)-(((gob[3])->w)/2))-50;
+        SDL_BlitSurface((gob[3]),NULL,fond,&(positions[3]));
+
+
+        positions[4].x = (((fond->w)/6)-(((gob[4])->w)/2));
+        positions[4].y = ((3*(fond->h)/5)-(((gob[4])->w)/2));
+        SDL_BlitSurface((gob[4]),NULL,fond,&(positions[4]));
+
+        break;
+
+        case 6:
+        positions[1].x = (5*((fond->w)/6)-(((gob[1])->w)/2));
+        positions[1].y = (3*((fond->h)/5)-(((gob[1])->w)/2));
+        SDL_BlitSurface((gob[1]),NULL,fond,&(positions[1]));
+
+
+        positions[2].x = (5*((fond->w)/6)-(((gob[2])->w)/2));
+        positions[2].y = (((fond->h)/5)-(((gob[2])->w)/2))+50;
+        SDL_BlitSurface((gob[2]),NULL,fond,&(positions[2]));
+
+
+        positions[3].x = (((fond->w)/2)-(((gob[3])->w)/2));
+        positions[3].y = (((fond->h)/6)-(((gob[3])->w)/2)) -50;
+        SDL_BlitSurface((gob[3]),NULL,fond,&(positions[3]));
+
+
+        positions[4].x = (((fond->w)/6)-(((gob[4])->w)/2));
+        positions[4].y = (((fond->h)/5)-(((gob[4])->w)/2))+50;
+        SDL_BlitSurface((gob[4]),NULL,fond,&(positions[4]));
+
+
+        positions[5].x = (((fond->w)/6)-(((gob[5])->w)/2));
+        positions[5].y = ((3*(fond->h)/5)-(((gob[5])->w)/2));
+        SDL_BlitSurface((gob[5]),NULL,fond,&(positions[5]));
+
+        break;
+
+        default:
+        fprintf(stderr,"nombre de joueurs incorrects\n");
+        break;
+    }
+
+    boutonMise = TTF_RenderText_Shaded(policePerudo,"MISE", couleurNoire, couleurRouge);
+    positionMise.x = ((fond->w)/2) -(boutonMise->w/2);
+    positionMise.y = ((((fond->h)/2))) - 6*(boutonMise->h/2);
+    SDL_BlitSurface(boutonMise, NULL, fond, &positionMise);
+
+
+    boutonMenteur = TTF_RenderText_Shaded(policePerudo,"MENTEUR", couleurNoire, couleurRouge);
+    positionMenteur.x = ((fond->w)/2) -(boutonMenteur->w/2);
+    positionMenteur.y = ((((fond->h)/2))) - 3*(boutonMenteur->h/2);
+    SDL_BlitSurface(boutonMenteur, NULL, fond, &positionMenteur);
+
+
+    boutonExact = TTF_RenderText_Shaded(policePerudo,"EXACT", couleurNoire, couleurRouge);
+    positionExact.x = ((fond->w)/2) -(boutonExact->w/2);
+    positionExact.y = ((((fond->h)/2)));
+    SDL_BlitSurface(boutonExact, NULL, fond, &positionExact);
+
+    // Là on affiche
+    SDL_Flip(fond);
+
+    if(quitter)             //si à la précédente boucle où l'on attend une réponse du joueur, il a cliqué sur quelque chose entrainant l'envoi de l'annonce, on réaffiche d'abord une belle interface avant d'envoyer
+    {
+        return annonce;
+    }
+
+    while(continuer)
+        {
+        FE_WaitEvent(&event);
+        switch(event.type)
+                {
+                    case SDL_QUIT:
+                        continuer = FAUX;
+                        quitter = VRAI;
+                    break;
+                    case SDL_MOUSEBUTTONDOWN:
+                        if(event.button.button==SDL_BUTTON_LEFT)
+                        {
+                            if (estDans(event,boutonMise,positionMise))
+                            {
+                                annonce.type = MISE;
+                                annonce.info.mise.nombre = 1;
+                                annonce.info.mise.de = 1;
+                                continuer = FAUX;
+                                quitter = VRAI;
+                                 //demande de la mise
+                                /** TODO */
+                            }
+
+                            if (estDans(event,boutonMenteur,positionMenteur))
+                            {
+                                annonce.type = MENTEUR;
+                                annonce.info.menteur = VRAI;
+                                continuer = FAUX;
+                                quitter = VRAI;
+                            }
+
+                            if (estDans(event,boutonExact,positionExact))
+                            {
+                                annonce.type = EXACT;
+                                annonce.info.exact = VRAI;
+                                continuer = FAUX;
+                                quitter = VRAI;
+                            }
+                        }
+                    break;
+                    default:
+                    break;
+                }
+        }
+    }
+return annonce;
 }
 
 /**
@@ -229,20 +378,23 @@ return EXIT_SUCCESS;
 int melange (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect * positions)
 {
     int i;
+    SDL_Rect pos[6];
     long timerDebut = SDL_GetTicks();
     long timerActuel = timerDebut;
-    while(timerActuel - timerDebut < 3000)
+
+    for (i = 0; i<nbJoueurs; i++)
+    {
+        pos[i]=positions[i];     //on sauvegarde les positions normales pour osciller autour de ça
+    }
+    while(timerActuel - timerDebut < 2000)
     {
 
         SDL_FillRect(fond,NULL,VERT);
         for (i = 0; i<nbJoueurs; i++)
         {
-            positions[i].x += (((random()%41)-20));           //on actualise
-            positions[i].x = (positions[i].x)%((fond->w)-80);    //et on renormalise
-            positions[i].y += (((random()%41)-20));
-            positions[i].y = (positions[i].y)%((fond->h)-80);
-
-            SDL_BlitSurface(gob[i],NULL,fond,&positions[i]);
+            pos[i].x = positions[i].x + (((random()%11)-5));           //on actualise
+            pos[i].y = positions[i].y + (((random()%11)-5));
+            SDL_BlitSurface(gob[i],NULL,fond,&pos[i]);
         }
             SDL_Delay(40);
             timerActuel = SDL_GetTicks();

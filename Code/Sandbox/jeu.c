@@ -23,7 +23,6 @@
 int partie(SDL_Surface * fond) {
 
 SDL_Color couleurNoire = { 0,0,0 } ;
-SDL_Color couleurRouge = { 200,0,0};
 SDL_Color couleurBlanche = {255,255,255};
 SDL_Color couleurViolette = {150,0,150};
 
@@ -142,6 +141,7 @@ SDL_Color couleurViolette = {150,0,150};
 
     SDL_Surface ** gobelets = NULL;
     SDL_Surface ** desReference = NULL;
+    SDL_Rect * positions = NULL;
     if ((gobelets = malloc(nb_de_joueurs * (sizeof(SDL_Surface))))==NULL)
     {
         perror("malloc");
@@ -152,8 +152,13 @@ SDL_Color couleurViolette = {150,0,150};
         perror("malloc");
         exit(EXIT_FAILURE);
     }
+    if ((positions = malloc(nb_de_joueurs* (sizeof(SDL_Rect))))==NULL)
+    {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
     init_graphique(nb_de_joueurs, gobelets, desReference); /** lancement de l'initialisation graphique et de l'interface de jeu */
-    interface(fond, nb_de_joueurs, gobelets, desReference);
+    interface(fond, nb_de_joueurs, gobelets, positions );
 
 
     Booleen premier_tour = VRAI; // pour l'initialisation

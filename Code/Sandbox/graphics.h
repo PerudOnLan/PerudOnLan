@@ -22,7 +22,7 @@
 
 int init_graphique (int nbJoueurs, SDL_Surface ** gob, SDL_Surface ** des);
 
-int interface (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect *positions   );
+Annonce interface (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect *positions   );
 
 int melange (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect * positions);
 #endif

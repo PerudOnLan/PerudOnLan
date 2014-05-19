@@ -15,8 +15,8 @@ int main() {
 
     //on initialise les paramètres au cas où on ne puisse les lire
     int resolution = 0;
-    long hauteurFenetre = 480;
-    long largeurFenetre = 640;
+    long hauteurFenetre = 600;
+    long largeurFenetre = 800;
     // loading de la config perso
     FILE* fconfig = NULL;
     if ((fconfig = fopen("config.ini","r"))==NULL)
@@ -37,16 +37,16 @@ int main() {
         switch(resolution)
             {
                 case 0:
-                hauteurFenetre = 480;
-                largeurFenetre = 640;
-                break;
-                case 1:
                 hauteurFenetre = 600;
                 largeurFenetre = 800;
                 break;
+                case 1:
+                hauteurFenetre = 900;
+                largeurFenetre = 1200;
+                break;
                 case 2:
-                hauteurFenetre = 1024;
-                largeurFenetre = 1280;
+                hauteurFenetre = 1060;
+                largeurFenetre = 1900;
                 break;
                 default:
                 fprintf(stderr,"\nAttention, options personnalisees impossibles a charger ! Verifiez config.ini \n");

@@ -150,8 +150,34 @@ while(!quitter)
                         continuer = FAUX;
                         break;
                         case SDLK_r:
-                        continuer = FAUX;
-                        quitter = VRAI;
+                        {
+                            SDL_Surface ** gobelets = NULL;
+                            SDL_Surface ** desReference = NULL;
+                            SDL_Rect * positions = NULL;
+                            if ((gobelets = malloc(6* (sizeof(SDL_Surface))))==NULL)
+                            {
+                                perror("malloc");
+                                exit(EXIT_FAILURE);
+                            }
+                            if ((desReference = malloc(6* (sizeof(SDL_Surface))))==NULL)
+                            {
+                                perror("malloc");
+                                exit(EXIT_FAILURE);
+                            }
+                            if ((positions = malloc(6* (sizeof(SDL_Rect))))==NULL)
+                            {
+                                perror("malloc");
+                                exit(EXIT_FAILURE);
+                            }
+
+                            init_graphique(6,gobelets,desReference) ;
+                            interface(fond,6,gobelets,positions) ;
+                            melange(fond,6,gobelets, positions) ;
+                            continuer = FAUX;
+                            quitter = VRAI;
+                            free(gobelets);
+                            free(desReference);
+                        }
                         break;
                         case SDLK_o:
                         options(fond);
@@ -180,17 +206,17 @@ while(!quitter)
                         SDL_Surface ** gobelets = NULL;
                         SDL_Surface ** desReference = NULL;
                         SDL_Rect * positions = NULL;
-                        if ((gobelets = malloc(6 * (sizeof(SDL_Surface))))==NULL)
+                        if ((gobelets = malloc(6* (sizeof(SDL_Surface))))==NULL)
                         {
                             perror("malloc");
                             exit(EXIT_FAILURE);
                         }
-                        if ((desReference = malloc(6 * (sizeof(SDL_Surface))))==NULL)
+                        if ((desReference = malloc(6* (sizeof(SDL_Surface))))==NULL)
                         {
                             perror("malloc");
                             exit(EXIT_FAILURE);
                         }
-                        if ((positions = malloc(6 * (sizeof(SDL_Rect))))==NULL)
+                        if ((positions = malloc(6* (sizeof(SDL_Rect))))==NULL)
                         {
                             perror("malloc");
                             exit(EXIT_FAILURE);
@@ -198,7 +224,7 @@ while(!quitter)
 
                         init_graphique(6,gobelets,desReference) ;
                         interface(fond,6,gobelets,positions) ;
-                        melange(fond, 6,gobelets, positions) ;
+                        melange(fond,6,gobelets, positions) ;
                         continuer = FAUX;
                         quitter = VRAI;
                         free(gobelets);
@@ -279,8 +305,8 @@ while(!quitter)
 void options(SDL_Surface * fond)
 {
 
-SDL_Color couleurNoire = { 0,0,0 } ;
-SDL_Color couleurBlanche = {255,255,255};
+    SDL_Color couleurNoire = { 0,0,0 } ;
+    SDL_Color couleurBlanche = {255,255,255};
 
 
     int resolution = 0;
@@ -417,17 +443,17 @@ SDL_Color couleurBlanche = {255,255,255};
     posOutliner.x = posR1.x - 10;
     posOutliner.y = posR1.y - 10;
     //On définit la position des textes, qui ne changera pas, puisque la résolution ne change qu'après redémarrage
-    SDL_Rect position640;
-    position640.x = (fond->w)/6 - 80;
-    position640.y = 150;
-
     SDL_Rect position800;
     position800.x = (fond->w)/6 - 80;
-    position800.y = 90+((fond->h)/3);
+    position800.y = 150;
 
-    SDL_Rect position1280;
-    position1280.x = (fond->w)/6 - 80;
-    position1280.y = 30 + 2*((fond->h)/3);
+    SDL_Rect position1200;
+    position1200.x = (fond->w)/6 - 80;
+    position1200.y = 90+((fond->h)/3);
+
+    SDL_Rect position1920;
+    position1920.x = (fond->w)/6 - 80;
+    position1920.y = 30 + 2*((fond->h)/3);
 
     // on va définir une boucle d'affichage
     do {
@@ -437,34 +463,34 @@ SDL_Color couleurBlanche = {255,255,255};
         affichageChange = FAUX;
 
         //On s'occupe des résolutions
-        // 640*480
-        SDL_Surface *texte640 = NULL;
-        if (resolution==0)      //on change la couleur de la résolution déjà choisie
-        texte640 = TTF_RenderText_Solid(policePerudo,"640x480", couleurBlanche);
-        else
-        texte640 = TTF_RenderText_Solid(policePerudo,"640x480", couleurNoire);
-
-        SDL_BlitSurface(texte640, NULL, fond, &position640);
-
-        //800*600
-        //Texte
+        // 800*600
         SDL_Surface *texte800 = NULL;
-        if (resolution==1)      //on change la couleur de la résolution déjà choisie
+        if (resolution==0)      //on change la couleur de la résolution déjà choisie
         texte800 = TTF_RenderText_Solid(policePerudo,"800x600", couleurBlanche);
         else
         texte800 = TTF_RenderText_Solid(policePerudo,"800x600", couleurNoire);
 
         SDL_BlitSurface(texte800, NULL, fond, &position800);
 
-        //1280*960
+        //1200*900
         //Texte
-        SDL_Surface *texte1280 = NULL;
-        if (resolution==2)      //on change la couleur de la résolution déjà choisie
-        texte1280 = TTF_RenderText_Solid(policePerudo,"1280x1024", couleurBlanche);
+        SDL_Surface *texte1200 = NULL;
+        if (resolution==1)      //on change la couleur de la résolution déjà choisie
+        texte1200 = TTF_RenderText_Solid(policePerudo,"1200x900", couleurBlanche);
         else
-        texte1280 = TTF_RenderText_Solid(policePerudo,"1280x1024", couleurNoire);
+        texte1200 = TTF_RenderText_Solid(policePerudo,"1200x900", couleurNoire);
 
-        SDL_BlitSurface(texte1280, NULL, fond, &position1280);
+        SDL_BlitSurface(texte1200, NULL, fond, &position1200);
+
+        //1920*1024
+        //Texte
+        SDL_Surface *texte1920 = NULL;
+        if (resolution==2)      //on change la couleur de la résolution déjà choisie
+        texte1920 = TTF_RenderText_Solid(policePerudo,"1920x1024", couleurBlanche);
+        else
+        texte1920 = TTF_RenderText_Solid(policePerudo,"1920x1024", couleurNoire);
+
+        SDL_BlitSurface(texte1920, NULL, fond, &position1920);
 
         //On met un outliner autour du dé de la couleur choisie
         SDL_BlitSurface(antiOutliner,NULL,fond,&posOutliner);
@@ -521,7 +547,7 @@ SDL_Color couleurBlanche = {255,255,255};
                     if(event.button.button==SDL_BUTTON_LEFT)
                     {
 
-                        if (estDans(event,texte640,position640))
+                        if (estDans(event,texte800,position800))
                         {
 
                             if (resolution != 0)
@@ -537,7 +563,7 @@ SDL_Color couleurBlanche = {255,255,255};
                                 continuer = FAUX;
                                 fflush(fconfig);
 
-                                if ((fond = SDL_SetVideoMode(640,480,32,SDL_DOUBLEBUF))==NULL)
+                                if ((fond = SDL_SetVideoMode(800,600,32,SDL_DOUBLEBUF))==NULL)
                                 {
                                 fprintf(stderr,"Erreur au redimensionnement de la video : %s", SDL_GetError());
                                 exit(EXIT_FAILURE);
@@ -546,7 +572,7 @@ SDL_Color couleurBlanche = {255,255,255};
 
                             }
                         }
-                        if (estDans(event,texte800,position800))
+                        if (estDans(event,texte1200,position1200))
                         {
 
                             if(resolution != 1)
@@ -560,7 +586,7 @@ SDL_Color couleurBlanche = {255,255,255};
                                 continuer = FAUX;
                                 fflush(fconfig);
 
-                                if ((fond = SDL_SetVideoMode(800,600,32,SDL_DOUBLEBUF))==NULL)
+                                if ((fond = SDL_SetVideoMode(1200,900,32,SDL_DOUBLEBUF))==NULL)
                                 {
                                 fprintf(stderr,"Erreur au redimensionnement de la video : %s", SDL_GetError());
                                 exit(EXIT_FAILURE);
@@ -568,7 +594,7 @@ SDL_Color couleurBlanche = {255,255,255};
 
                             }
                         }
-                        if  (estDans(event,texte1280,position1280))
+                        if  (estDans(event,texte1920,position1920))
                         {
                             if(resolution !=2)
                             {
@@ -581,7 +607,7 @@ SDL_Color couleurBlanche = {255,255,255};
                                 continuer = FAUX;
                                 fflush(fconfig);
 
-                                if ((fond = SDL_SetVideoMode(1280,1024,32,SDL_DOUBLEBUF))==NULL)
+                                if ((fond = SDL_SetVideoMode(1900,1060,32,SDL_DOUBLEBUF))==NULL)
                                 {
                                 fprintf(stderr,"Erreur au redimensionnement de la video : %s", SDL_GetError());
                                 exit(EXIT_FAILURE);
@@ -689,9 +715,9 @@ SDL_Color couleurBlanche = {255,255,255};
         }
 
         //Et on free, c'est important
-        SDL_FreeSurface(texte640);
         SDL_FreeSurface(texte800);
-        SDL_FreeSurface(texte1280);
+        SDL_FreeSurface(texte1200);
+        SDL_FreeSurface(texte1920);
     } while (affichageChange);
 
 SDL_FreeSurface(texteResolution);

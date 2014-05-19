@@ -21,20 +21,6 @@
 #include "couleurs.h"
 #include "graphics.h"
 
-typedef enum {MISE, MENTEUR, EXACT} Type;
-
-typedef struct {
-    Type type;
-    union {
-    struct {
-        int nombre;
-        int de;
-    } mise;
-        Booleen menteur;
-        Booleen exact;
-    } info;
-} Annonce;
-
 typedef struct {
     char pseudo[TAILLE_MAX+1];
     int des[6];
