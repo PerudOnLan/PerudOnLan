@@ -167,15 +167,44 @@ Joueur creerIa () {
 */
 Annonce cerveauIA (Annonce annonce_precedente, int nb_de_des_max, Joueur iA) {
 
-    if (annonce_precedente.type != MISE) {
-        fprintf(stderr, "annonce erronee, on ne peut surrencherir que sur une mise");
-        exit (EXIT_FAILURE);
-    }
-    int commentProbable = nombreValeurProbable(annonce_precedente.info.mise.de, nb_de_des_max, iA.nb_de_des, iA.des) - annonce_precedente.info.mise.nombre + plusOuMoins(nb_de_des_max) ;
     int lancer = d5() ;
     Annonce annonceIa ;
     int *pNombre = NULL;
     int *pValeur = NULL;
+
+    if (annonce_precedente.type == DEBUT) {
+
+        switch (lancer) {
+
+            case 1:
+                annonceIa.info.mise.de = 1;
+                annonceIa.info.mise.nombre = 1;
+                break;
+            case 2:
+            case 3:
+            case 4:
+                int valeurRandom = d5();
+                int valeurRandom2 = d5();
+                valeurLePlus(iA.des, pNombre, pValeur, annonce_precedente.info.mise.de, nb_de_des_max) ;
+                annonceIa.info.mise.nombre = nombreValeurProbable(valeurRandom + 1, nb_de_des_max, iA.nb_de_des, iA.des) / 2;
+                annonceIa.info.mise.de = valeurRandom2 + 1;
+                break;
+            case 5:
+                valeurLePlus(iA.des, pNombre, pValeur, annonce_precedente.info.mise.de, nb_de_des_max) ;
+                annonceIa.info.mise.nombre = nombreValeurProbable(*pValeur, nb_de_des_max, iA.nb_de_des, iA.des);
+                annonceIa.info.mise.de = *pValeur;
+                break;
+            default:
+                break;
+
+        }
+
+
+    }
+
+    else {
+
+    int commentProbable = nombreValeurProbable(annonce_precedente.info.mise.de, nb_de_des_max, iA.nb_de_des, iA.des) - annonce_precedente.info.mise.nombre + plusOuMoins(nb_de_des_max) ;
 
     annonceIa.type = ANNONCE_INVALIDE;
 
@@ -404,6 +433,7 @@ Annonce cerveauIA (Annonce annonce_precedente, int nb_de_des_max, Joueur iA) {
         }
     }
     return annonceIa;
+    }
 }
 
 
