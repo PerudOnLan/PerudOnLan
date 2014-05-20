@@ -70,8 +70,9 @@ Booleen estDans (SDL_Event event, SDL_Surface * rectangle, SDL_Rect pos)
 * \author Dede
 * \date 16/04
 */
-int longueur_mot(char * mot)
+int longueur_mot(void * mot)
     {
+        char * chaine=mot
         int i = 0;
         while (mot[i] != '\0' && i<TAILLE_MAX)
         {

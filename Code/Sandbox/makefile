@@ -27,8 +27,8 @@ graphics.o: graphics.c graphics.h couleurs.h PerudUtils.h
 doxygen : 
 	doxygen ../../Documents/Doxygen/Doxyfile
 
-clean : Perudo
-	rm -f perudo.o menu.o jeu.o PerudUtils.o testserveurv3.o testclientv3.o
+clean : 
+	rm -f perudo.o menu.o jeu.o PerudUtils.o testserveurv3.o testclientv3.o testsUnitaires.o ia.o graphics.o
 
 serveur : testserveurv3.o PerudUtils.o
 	$(CC) $(CFLAGS) testserveurv3.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o Serveur

@@ -90,22 +90,22 @@ void test_nombreValeurProbable()
 void test_valeurLePlus()
 {
     printf("\nTest de la fonction valeurLePlus de ia\n\n");
-    int *pNombre;
-    int *pValeur;
+    int nombre = 0;
+    int valeur = 0;
     int test1[]= {0,0,1,1,1,2}, test2[]= {1,0,2,1,1,0}, test3[] = {2,0,0,1,0,2}, test4[] = {1,1,1,1,1,0}, test5[] = {0,1,1,1,1,1};
-    valeurLePlus(test1, pNombre, pValeur, 2, 15);
-    printf("Le resultat de la fonction avec en parametres [0,0,1,1,1,2], 2, 15 est : %d %d\n", *pNombre, *pValeur);
+    valeurLePlus(test1, &nombre, &valeur, 2, 15);
+    printf("Le resultat de la fonction avec en parametres [0,0,1,1,1,2], 2, 15 est : %d %d\n", nombre, valeur);
     printf("Le resultat attendu est 2 6\n");
-    valeurLePlus(test2, pNombre, pValeur, 5, 15);
-    printf("Le resultat de la fonction avec en parametres [1,0,2,1,1,0], 5, 15 est : %d %d\n", *pNombre, *pValeur);
+    valeurLePlus(test2, &nombre, &valeur, 5, 15);
+    printf("Le resultat de la fonction avec en parametres [1,0,2,1,1,0], 5, 15 est : %d %d\n", nombre, valeur);
     printf("Le resultat attendu est 1 1\n");
-    valeurLePlus(test3, pNombre, pValeur, 4, 15);
-    printf("Le resultat de la fonction avec en parametres [2,0,0,1,0,2], 4, 15 est : %d %d\n", *pNombre, *pValeur);
+    valeurLePlus(test3, &nombre, &valeur, 4, 15);
+    printf("Le resultat de la fonction avec en parametres [2,0,0,1,0,2], 4, 15 est : %d %d\n", nombre, valeur);
     printf("Le resultat attendu est 4 6\n");
-    valeurLePlus(test4, pNombre, pValeur, 3, 15);
-    printf("Le resultat de la fonction avec en parametres [1,1,1,1,1,0], 3, 15 est : %d %d\n", *pNombre, *pValeur);
+    valeurLePlus(test4, &nombre, &valeur, 3, 15);
+    printf("Le resultat de la fonction avec en parametres [1,1,1,1,1,0], 3, 15 est : %d %d\n", nombre, valeur);
     printf("Le resultat attendu est 2 5\n");
-    valeurLePlus(test5, pNombre, pValeur, 1, 15);
-    printf("Le resultat de la fonction avec en parametres [0,1,1,1,1,1], 1, 15 est : %d %d\n", *pNombre, *pValeur);
+    valeurLePlus(test5, &nombre, &valeur, 1, 15);
+    printf("Le resultat de la fonction avec en parametres [0,1,1,1,1,1], 1, 15 est : %d %d\n", nombre, valeur);
     printf("Le resultat attendu est 1 6\n");
 }

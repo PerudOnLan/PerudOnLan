@@ -53,6 +53,7 @@ typedef struct {
         Booleen debut;
         Booleen menteur;
         Booleen exact;
+        int tour    //numéro du joueur dont c'est le tour
     } info;
 } Annonce;
 
