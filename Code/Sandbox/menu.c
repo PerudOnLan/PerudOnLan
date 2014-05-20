@@ -154,25 +154,25 @@ while(!quitter)
                             SDL_Surface ** gobelets = NULL;
                             SDL_Surface ** desReference = NULL;
                             SDL_Rect * positions = NULL;
-                            if ((gobelets = malloc(6* (sizeof(SDL_Surface))))==NULL)
+                            if ((gobelets = malloc(4* (sizeof(SDL_Surface))))==NULL)
                             {
                                 perror("malloc");
                                 exit(EXIT_FAILURE);
                             }
-                            if ((desReference = malloc(6* (sizeof(SDL_Surface))))==NULL)
+                            if ((desReference = malloc(4* (sizeof(SDL_Surface))))==NULL)
                             {
                                 perror("malloc");
                                 exit(EXIT_FAILURE);
                             }
-                            if ((positions = malloc(6* (sizeof(SDL_Rect))))==NULL)
+                            if ((positions = malloc(4* (sizeof(SDL_Rect))))==NULL)
                             {
                                 perror("malloc");
                                 exit(EXIT_FAILURE);
                             }
 
-                            init_graphique(6,gobelets,desReference) ;
-                            interface(fond,6,gobelets,positions) ;
-                            melange(fond,6,gobelets, positions) ;
+                            init_graphique(4,gobelets,desReference) ;
+                            interface(fond,4,gobelets,positions) ;
+                            melange(fond,4,gobelets, positions) ;
                             continuer = FAUX;
                             quitter = VRAI;
                             free(gobelets);

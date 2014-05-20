@@ -28,16 +28,16 @@ doxygen :
 	doxygen ../../Documents/Doxygen/Doxyfile
 
 clean : Perudo
-	rm -f perudo.o menu.o jeu.o PerudUtils.o
+	rm -f perudo.o menu.o jeu.o PerudUtils.o testserveurv3.o testclientv3.o
 
-serveur : testServeur.o PerudUtils.o
-	$(CC) $(CFLAGS) testServeur.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o Serveur
+serveur : testserveurv3.o PerudUtils.o
+	$(CC) $(CFLAGS) testserveurv3.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o Serveur
 
-testServeur.o : testServeur.c
-	$(CC) $(CFLAGS) -I$(PHEADERS) -c testServeur.c
+testserveurv3.o : testserveurv3.c
+	$(CC) $(CFLAGS) -I$(PHEADERS) -c testserveurv3.c
 
-client : testClient.o PerudUtils.o
-	$(CC) $(CFLAGS) testClient.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o Client
+client : testclientv3.o PerudUtils.o
+	$(CC) $(CFLAGS) testclientv3.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o Client
 
-testClient.o : testClient.c
-	$(CC) $(CFLAGS) -I$(PHEADERS) -c testClient.c
+testclientv3.o : testclientv3.c
+	$(CC) $(CFLAGS) -I$(PHEADERS) -c testclientv3.c
