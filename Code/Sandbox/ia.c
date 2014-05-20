@@ -10,11 +10,6 @@
 */
 #include "ia.h"
 
-int main()
-{
-return 0;
-}
-
 /**
 * \fn int d5 ()
 * \brief Lancement d'un de a 5 faces
@@ -106,6 +101,7 @@ int plusOuMoins (int nbT) {
                 break ;
         }
     }
+    return 0;
 }
 
 
@@ -121,8 +117,6 @@ int plusOuMoins (int nbT) {
 */
 void valeurLePlus (int des[6], int *pNombre, int *pValeur, int valeur_precedente, int nb_de_des) {
 
-    *pNombre = des[1];
-    *pValeur = 2;
     int i;
     for (i=2;i<6;i++) {
 
@@ -166,23 +160,24 @@ Joueur creerIa () {
 * \fn Annonce cerveauIA (Annonce annonce_precedente, int des[6])
 * \brief Le cerveau de l'ia : son comportement quand elle doit faire une annonce
 * \param annonce_precedente l'annonce du joueur précédent
-* \param des[6] les valeurs des dés de l'ia
+* \param nb_de_des_max le nombre total de des dans la partie
+* \param Joueur iA l'instance d'iA considérée
 * \author Artus, François
 * \date 08/04
 */
-Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
+Annonce cerveauIA (Annonce annonce_precedente, int nb_de_des_max, Joueur iA) {
 
     if (annonce_precedente.type != MISE) {
         fprintf(stderr, "annonce erronee, on ne peut surrencherir que sur une mise");
         exit (EXIT_FAILURE);
     }
-    int nb_de_des_max ;
-    Joueur iA ;
     int commentProbable = nombreValeurProbable(annonce_precedente.info.mise.de, nb_de_des_max, iA.nb_de_des, iA.des) - annonce_precedente.info.mise.nombre + plusOuMoins(nb_de_des_max) ;
     int lancer = d5() ;
     Annonce annonceIa ;
-    int *pNombre;
-    int *pValeur;
+    int *pNombre = NULL;
+    int *pValeur = NULL;
+
+    annonceIa.type = ANNONCE_INVALIDE;
 
     switch (commentProbable) {
 
@@ -220,7 +215,7 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
                     break;
                 case 5:
                      if (iA.des[annonce_precedente.info.mise.de-1] < annonce_precedente.info.mise.nombre) {
-                        annonceIa.info.exact.exact = VRAI;
+                        annonceIa.info.exact = VRAI;
                         break;
                     }
                     else {
@@ -267,7 +262,7 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
                     break;
                 case 5:
                     if (iA.des[annonce_precedente.info.mise.de-1] < annonce_precedente.info.mise.nombre) {
-                        annonceIa.info.exact.exact = VRAI;
+                        annonceIa.info.exact = VRAI;
                         break;
                     }
                     else {
@@ -288,7 +283,7 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
                 case 2:
                 case 3:
                     if (iA.des[annonce_precedente.info.mise.de-1] < annonce_precedente.info.mise.nombre) {
-                        annonceIa.info.menteur.menteur = VRAI;
+                        annonceIa.info.menteur = VRAI;
                         break;
                     }
                     else {
@@ -321,7 +316,7 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
                     break;
                 case 5:
                     if (iA.des[annonce_precedente.info.mise.de-1] < annonce_precedente.info.mise.nombre) {
-                        annonceIa.info.exact.exact = VRAI;
+                        annonceIa.info.exact = VRAI;
                         break;
                     }
                     else {
@@ -331,7 +326,9 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
                     }
             }
 
-
+                default:
+                // on gère les autres cas de façon générique après
+                break;
     }
 
     if (commentProbable >= 4) {
@@ -375,6 +372,9 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
                         annonceIa.info.mise.nombre = (1 + annonce_precedente.info.mise.nombre)/2 + 1;
                     }
                     break;
+                default:
+                //normalement inatteignable
+                break;
         }
     }
 
@@ -385,7 +385,7 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
             case 3:
             case 4:
                 if (iA.des[annonce_precedente.info.mise.de-1] < annonce_precedente.info.mise.nombre) {
-                        annonceIa.info.menteur.menteur = VRAI;
+                        annonceIa.info.menteur = VRAI;
                         break;
                     }
                     else {
@@ -398,8 +398,12 @@ Annonce cerveauIA (Annonce annonce_precedente, int des[6]) {
                 annonceIa.info.mise.nombre = annonce_precedente.info.mise.nombre + 1;
                 return annonceIa;
                 break;
+            default:
+            //inatteignable normalement
+            break;
         }
     }
+    return annonceIa;
 }
 
 

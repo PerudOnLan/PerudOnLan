@@ -1,6 +1,6 @@
 /**
 * \file graphics.h
-* \brief code du jeu à proprement parler
+* \brief code de la partie graphique propre au Perudo
 * \author Dede
 * \version 0.1
 * \date 16/04

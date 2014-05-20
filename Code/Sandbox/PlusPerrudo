@@ -1,0 +1,62 @@
+
+int k =0;
+
+while ( (-1 == NET2_TCPAcceptOn(port)) && (k<10) )
+    {
+        port++;
+        k++;
+    }
+
+if(k ==10)
+    {
+    fprintf(stderr, "Veuillez liberer un port");
+    exit(1);
+    }
+/////////////////////////////////////////////////////////////////////////////
+
+  int nbrjoueurs
+
+
+  if(argc =! 2) {
+  fprintf(stderr, "Mauvaise utilistation: nbr joueurs");
+  exit(1);
+  }
+
+  nbrjoueurs = argv[1][0]-'0';
+
+  if ((nbrjoueurs <1) || (nbrjoueurs > 6 ))
+    {
+    fprintf(stderr, "Mauvaise utilistation: nbr joueurs");
+    exit(1);
+    }
+
+////////////////////////////////////////////////////////////////////////////
+IPadress IPServeur;
+
+////////////////////////////////////////////////
+/fonction qui envoi un union
+fwrite et fread
+
+FILE *fichier;
+fichier = fopen(f)
+
+
+ouvrir fichier fopen avec rb
+while fread lecture fichier sizeof(union)
+
+
+
+int i = 0;
+
+for (i = 0; i < limit; i++)
+  {
+    memset(buf, 0, sizeof(buf));
+    write(,buf,);
+    NET2_TCPSend(s, buf, sizeof(buf));
+    count += sizeof(buf);
+
+  }
+
+
+
+int NET2_TCPConnectToIP(IPaddress *ip)

@@ -2,7 +2,7 @@
 * \file PerudUtils.c
 * \brief Fonctions utiles pour le projet
 * \author Dede
-* \version 0.2
+* \version 1.0
 * \date 09/04
 *
 * Diverses fonctions, majoritairement liées à la SDL, afin de nous simplifier la vie
@@ -76,6 +76,7 @@ int longueur_mot(char * mot)
         while (mot[i] != '\0' && i<TAILLE_MAX)
         {
             i++;
+            printf("%c\n", mot[i]);
         }
         if (i<TAILLE_MAX)
         return i;

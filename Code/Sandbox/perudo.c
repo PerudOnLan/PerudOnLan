@@ -1,6 +1,6 @@
 /**
 * \file perudo.c
-* \brief Corps du programme, contient le main
+* \brief Tete du programme, contient le main
 * \author Dede, François
 * \version 0.2
 * \date 09/04

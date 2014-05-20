@@ -19,6 +19,7 @@ int main(int argc, char **argv)
   int count = 0;
   int port = 6666;
   int limit = 1000;
+  int message ;
   Annonce mess;
   IPaddress *monIP = NULL;
 
@@ -123,6 +124,10 @@ printf("3 OK\n");
       exit(0);
       printf("9 OK\n");
       break;
+    }
+    if (fread(&message, sizeof(int) , 1, NET2_GetSocket(&ev)) != 0 )
+    {
+    printf("%d",message);
     }
   }
 printf("10 OK\n");

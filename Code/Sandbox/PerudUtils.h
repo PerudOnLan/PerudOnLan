@@ -1,8 +1,8 @@
 /**
-* \file PerudUtils.c
+* \file PerudUtils.h
 * \brief Fonctions utiles pour le projet
 * \author Dede
-* \version 0.2
+* \version 1.0
 * \date 09/04
 */
 
@@ -35,7 +35,7 @@ typedef enum
 *\enum Type
 * \brief Type d'annonce
 */
-typedef enum {MISE, MENTEUR, EXACT, ANNONCE_INVALIDE} Type;
+typedef enum {DEBUT, MISE, MENTEUR, EXACT, ANNONCE_INVALIDE} Type;
 
 /**
 *\struct Annonce
@@ -50,6 +50,7 @@ typedef struct {
         int nombre;
         int de;
     } mise;
+        Booleen debut;
         Booleen menteur;
         Booleen exact;
     } info;

@@ -21,7 +21,22 @@ int main(int argc, char **argv)
   int next[0xffff];
   int n = -1;
   int port = 6666;
+  int nbrjoueurs;
+  int message =42;
   Annonce mess;
+
+  if(argc =! 2) {
+  fprintf(stderr, "Mauvaise utilistation: nbr joueurs");
+  exit(1);
+  }
+
+  nbrjoueurs = argv[1][0]-'0';
+
+  if (nbrjoueurs <1 || nbrjoueurs > 6 )
+    {
+    fprintf(stderr, "Mauvaise utilistation: nbr joueurs");
+    exit(1);
+    }
 
 
   memset(next, 0, sizeof(next));
@@ -32,7 +47,7 @@ int main(int argc, char **argv)
 
   NET2_TCPAcceptOn(port);
 
-  if(count>5) {
+  if(count>nbrjoueurs) {
     fprintf(stderr, "Le nombre maximal de joueur a été atteint");
     exit(0);
     }
@@ -97,6 +112,9 @@ int main(int argc, char **argv)
       exit(0);
       break;
     }
+     if (fwrite(&message, sizeof(int) , 1, NET2_GetSocket(&ev)) != 0 )
+    {
+    printf("%d",message);
   }
 
   mySDL_Quit();

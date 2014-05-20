@@ -16,7 +16,7 @@
 int d5 () ;
 int nombreValeurProbable (int valeur, int nbT, int nbDe, int de[6]) ;
 int plusOuMoins (int nbT) ;
-Annonce cerveauIA (Annonce annonce_precedente, int de[6]) ;
+Annonce cerveauIA (Annonce annonce_precedente, int nb_de_des_max, Joueur iA);
 void valeurLePlus (int de[6], int *pNombre, int *pValeur, int valeur_precedente, int nb_de_des) ;
 Joueur creerIa();
 
