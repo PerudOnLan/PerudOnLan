@@ -42,7 +42,7 @@ client : testclientv3.o PerudUtils.o
 testclientv3.o : testclientv3.c
 	$(CC) $(CFLAGS) -I$(PHEADERS) -c testclientv3.c
 
-testsUnitaires: testsUnitaires.o PerudUtils.o ia.o
+testsUnitaires: testsUnitaires.o PerudUtils.o ia.o 
 	$(CC) $(CFLAGS) testsUnitaires.o PerudUtils.o ia.o -L$(PLIBS) $(SDLLIBS) -o TestsUnitaires
 
 ia.o : ia.c

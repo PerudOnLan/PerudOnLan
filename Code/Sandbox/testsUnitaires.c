@@ -25,6 +25,8 @@ int main()
 */
 void test_longueur_mot()
 {
+    char testIncorrect[2]="42";
+
     printf("\nTest de la fonction longueur_mot de PerudUtils\n\n");
     printf("Le resultat de la fonction avec le mot 'Coucou' est %d\n", longueur_mot("Coucou"));
     printf("Le resultat attendu est 6\n");
@@ -34,7 +36,7 @@ void test_longueur_mot()
     printf("Le resultat attendu est -1\n");
     printf("Le resultat de la fonction avec le mot 'Oups' est %d\n", longueur_mot("Oups"));
     printf("Le resultat attendu est 4\n");
-    printf("Le resultat de la fonction avec l'entier 42 est %d\n", longueur_mot(42));
+    printf("Le resultat de la fonction avec la chaine {'4';'2'} est %d\n", longueur_mot(testIncorrect));
     printf("Le resultat attendu est  -1 \n");
 }
 
