@@ -70,21 +70,22 @@ Booleen estDans (SDL_Event event, SDL_Surface * rectangle, SDL_Rect pos)
 * \author Dede
 * \date 16/04
 */
-int longueur_mot(void * mot)
+int longueur_mot(char * mot)
     {
-        char * chaine=mot
         int i = 0;
-        while (mot[i] != '\0' && i<TAILLE_MAX)
+        while (mot[i] != '\0' && i<TAILLE_MAX && mot[i]<='z' && mot[i]>='A')
         {
-            i++;
             printf("%c\n", mot[i]);
+            i++;
         }
-        if (i<TAILLE_MAX)
-        return i;
+        if (mot[i]== '\0')  //on a un vrai mot
+        {
+            return i;
+        }
         else
         {
-        fprintf(stderr,"l'objet %s n'est pas un mot valable", mot);
-        return (-1);
+            fprintf(stderr,"\nl'objet %s n'est pas un mot valable\n", mot);
+            return (-1);
         }
     }
 
