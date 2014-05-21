@@ -31,5 +31,6 @@ int partie (SDL_Surface * fond);
 
 void klik(SDL_Surface * fond);
 
+Booleen estMiseValide(Annonce annonce, Annonce annonce_precedente, int nb_de_des_max);
 
 #endif

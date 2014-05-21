@@ -178,8 +178,8 @@ SDL_Color couleurViolette = {150,0,150};
         Annonce annonce_precedente, annonce; //encore d'autres
 
         annonce_precedente.type = MISE; //au premier tour de jeu, il n' y a pas encore eu d'annonce précédente
-        annonce_precedente.info.nombre = 0;
-        annonce_precedente.info.de = 2;
+        annonce_precedente.info.mise.nombre = 0;
+        annonce_precedente.info.mise.de = 2;
 
 
         for (i=0;i<nb_de_joueurs;i++)
@@ -212,7 +212,8 @@ SDL_Color couleurViolette = {150,0,150};
         // boucle secondaire, jusqu'a perte ou gain d'un de
         while (tour_de_jeu)
         {
-            annonce.type = ANNONCE_INVALIDE; int somme = 0; // encore des variables
+            annonce.type = ANNONCE_INVALIDE;
+            int somme = 0; // encore des variables
 
             // on fait ca si on a deja une mise avant, pour le jeu ce sera gere graphiquement
             if (!premiere_mise)
@@ -237,31 +238,8 @@ SDL_Color couleurViolette = {150,0,150};
                     Booleen annonce_incorrecte = VRAI; // pour s'assurer que le joueur fait une annonce correcte
                     while (annonce_incorrecte)
                     {
-                        choixAnnonce(&annonce,fond,nb_de_joueurs,gobelets,positions);
-                        if (premiere_mise) // un peu special puisqu'il n'y a pas d'annonce precedente
-                        {
-                            if (annonce.info.mise.nombre > 0  && annonce.info.mise.nombre < nb_de_des_max) // pleins de conditions
-                            {
-                                annonce_precedente.info.mise.nombre = annonce.info.mise.nombre;
-                                annonce_precedente.info.mise.de = annonce.info.mise.de;
-              /**TODO */                  fprintf(stdout, "Le joueur %s a mise : %d %d", joueurs[(joueur_actuel%nb_de_joueurs)].pseudo, annonce.info.mise.nombre, annonce.info.mise.de);
-                                joueur_actuel++; // on passe au joueur suivant
-                                premiere_mise = FAUX; // la premiere mise est faite
-                                annonce_incorrecte = FAUX; // les conditions sont la pour ca
-                            }
-                            else
-                            {
-              /**TODO */                  fprintf(stdout, "\nAnnonce incorrecte.\n");
-                            }
-                        }
 
-                        else
-                        {
-                            if (annonce.info.mise.de > 0 && annonce.info.mise.nombre > 0 && annonce.info.mise.de <7 && annonce.info.mise.nombre <= nb_de_des_max
-                                && ((annonce.info.mise.nombre == annonce_precedente.info.mise.nombre && annonce.info.mise.de > annonce_precedente.info.mise.de && annonce_precedente.info.mise.de != 1)
-                                || (annonce.info.mise.nombre > annonce_precedente.info.mise.nombre && annonce.info.mise.de == annonce_precedente.info.mise.de)
-                                || (annonce.info.mise.de == 1 && annonce.info.mise.nombre >= (annonce_precedente.info.mise.nombre+1)/2 && annonce_precedente.info.mise.de != 1)
-                                || (annonce_precedente.info.mise.de == 1 && annonce.info.mise.nombre >= annonce_precedente.info.mise.nombre*2 +1))) // pleins pleins pleins de conditions
+                            if (estMiseValide(annonce, annonce_precedente, nb_de_des_max)) // pleins pleins pleins de conditions
                             {
                                 annonce_precedente.info.mise.nombre = annonce.info.mise.nombre;
                                 annonce_precedente.info.mise.de = annonce.info.mise.de;
@@ -271,38 +249,45 @@ SDL_Color couleurViolette = {150,0,150};
                             }
                             else
                             {
-                                fprintf(stdout, "\nAnnonce incorrecte.\n");
+                              /**TODO */  fprintf(stdout, "\nAnnonce incorrecte.\n");
+                             choixAnnonce(&annonce,fond,nb_de_joueurs,gobelets,positions);
                             }
-                        }
+
                     }
                     break;
                 }
                 case MENTEUR:
                 {
-                if (annonce_precedente.info.mise.de != 1) {
-                for (i=0;i<nb_de_joueurs;i++) {
-                    somme += joueurs[i].des[annonce_precedente.info.mise.de -1] + joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
+                    if (annonce_precedente.info.mise.de != 1)
+                    {
+                        for (i=0;i<nb_de_joueurs;i++)
+                        {
+                            somme += joueurs[i].des[annonce_precedente.info.mise.de -1] + joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
+                        }
+                    }
+                    else
+                    {
+                        for (i=0;i<nb_de_joueurs;i++)
+                        {
+                            somme += joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
+                        }
+                    }
+         /**TODO*/      fprintf(stdout, "\nIl y a %d %d au total.\n", somme, annonce_precedente.info.mise.de);
+                    if (somme<annonce_precedente.info.mise.nombre)
+                    {
+                        joueurs[(joueur_actuel-1)%nb_de_joueurs].nb_de_des--; // le joueur qui a fait la derniere annonce perd un de
+        /**TODO*/       fprintf(stdout, "\nMenteur !\n"); // c'est pas bien de mentir
+                        joueur_actuel = (joueur_actuel-1)%nb_de_joueurs; // on recommence le tour suivant a partir du joueur precedent
+                    }
+                    else
+                    {
+                        joueurs[joueur_actuel%nb_de_joueurs].nb_de_des--; // c'est le joueur actuel qui perd un de, et c'est lui qui fait la premiere mise au tour suivant
+          /**TODO*/     fprintf(stdout, "\nEh non, le compte y est !\n");
+                    }
+                    nb_de_des_max--; // globalement, il y a un de en moins (merci Captain Obvious)
+                    tour_de_jeu = FAUX; // fin du tour de jeu
+                    break;
                 }
-                }
-                else {
-                for (i=0;i<nb_de_joueurs;i++) {
-                    somme += joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
-                }
-                }
-                fprintf(stdout, "\nIl y a %d %d au total.\n", somme, annonce_precedente.info.mise.de);
-                if (somme<annonce_precedente.info.mise.nombre) {
-                    joueurs[(joueur_actuel-1)%nb_de_joueurs].nb_de_des--; // le joueur qui a fait la derniere annonce perd un de
-                    fprintf(stdout, "\nMenteur !\n"); // c'est pas bien de mentir
-                    joueur_actuel = (joueur_actuel-1)%nb_de_joueurs; // on recommence le tour suivant a partir du joueur precedent
-                }
-                else {
-                    joueurs[joueur_actuel%nb_de_joueurs].nb_de_des--; // c'est le joueur actuel qui perd un de, et c'est lui qui fait la premiere mise au tour suivant
-                    fprintf(stdout, "\nEh non, le compte y est !\n");
-                }
-                nb_de_des_max--; // globalement, il y a un de en moins (merci Captain Obvious)
-                tour_de_jeu = FAUX; // fin du tour de jeu
-                break;
-            }
                 case EXACT:
                 {
                     if (annonce_precedente.info.mise.de != 1)
@@ -319,10 +304,10 @@ SDL_Color couleurViolette = {150,0,150};
                             somme += joueurs[i].des[0]; // on calcule pour verifier si il y a mensonge ou pas
                         }
                     }
-                    fprintf(stdout, "\nIl y a %d %d au total.\n", somme, annonce_precedente.info.mise.de);
+          /**TODO*/ fprintf(stdout, "\nIl y a %d %d au total.\n", somme, annonce_precedente.info.mise.de);
                     if (somme==annonce_precedente.info.mise.nombre)
                     {
-                        fprintf(stdout, "\nGG, y'a que ca qui marche à ce jeu là.\n"); // on ne le dira jamais assez
+       /**TODO*/        fprintf(stdout, "\nGG, y'a que ca qui marche à ce jeu là.\n"); // on ne le dira jamais assez
                         if (joueurs[joueur_actuel%nb_de_joueurs].nb_de_des <5)
                         {
                             joueurs[joueur_actuel%nb_de_joueurs].nb_de_des++; // le joueur regagne un de, si il en avait moins de 5
@@ -331,7 +316,7 @@ SDL_Color couleurViolette = {150,0,150};
                     }
                     else
                     {
-                        fprintf(stdout, "\nDommage, ce n'est pas exact.\n"); // Regle 2 : c'est toujours exact, sauf quand ca l'est pas
+       /**TODO*/        fprintf(stdout, "\nDommage, ce n'est pas exact.\n"); // Regle 2 : c'est toujours exact, sauf quand ca l'est pas
                         joueurs[joueur_actuel%nb_de_joueurs].nb_de_des--; // cette fois le joueur perd un de
                         nb_de_des_max--; // ...et du coup le nombre de des total diminue
                     }
@@ -340,7 +325,7 @@ SDL_Color couleurViolette = {150,0,150};
                 }
                 default:
                 {
-                    fprintf(stdout, "\nAnnonce incorrecte.\n"); // juste parce qu'il faut mettre un "default"
+          /**TODO*/ fprintf(stdout, "\nAnnonce incorrecte.\n"); // juste parce qu'il faut mettre un "default"
                 }
 
             } // cette accolade est pour la fin du switch
@@ -351,10 +336,13 @@ SDL_Color couleurViolette = {150,0,150};
             if (joueurs[i].nb_de_des==0)
             {
                 continuer = FAUX; // si un joueur tombe a 0 de, la partie s'arrete
-                fprintf(stdout, "\nLe joueur %s est elimine.", joueurs[i].pseudo);
+ /**TODO*/      fprintf(stdout, "\nLe joueur %s est elimine.", joueurs[i].pseudo);
             }
         }
-        if (continuer) fprintf(stdout, "\nNouveau tour de jeu :\n"); // sinon on continue
+ /**TODO*/if (continuer)
+        {
+            fprintf(stdout, "\nNouveau tour de jeu :\n"); // sinon on continue
+        }
     } // sortie de la boucle principale
 
 
@@ -588,4 +576,33 @@ SDL_Color couleurNoire = { 0,0,0 } ;
     SDL_FreeSurface(R6);
     SDL_FreeSurface(texteTimer);
     TTF_CloseFont(policePerudo);
+}
+
+
+/**
+* \fn void estMiseValide(Annonce annonce, Annonce, annonce_precedente)
+* \brief Une pitite comparaison pour savoir si l'annonce est valide
+* \param annonce_precedente
+* \param annonce
+* \author Dede, parce que quand même, franchement, la comparaison de 5 lignes dans le if...
+* \date 20/04
+*/
+
+Booleen estMiseValide(Annonce annonce, Annonce annonce_precedente, int nb_de_des_max)
+{
+    int nb = annonce.info.mise.nombre;
+    int nb_prec = annonce_precedente.info.mise.nombre;
+    int de = annonce.info.mise.de;
+    int de_prec = annonce_precedente.info.mise.de;
+
+return (
+        (nb > 0 && nb <= nb_de_des_max) // on vérifie que le nombre de dés est théoriquement possible
+         &&
+            (
+                (nb == nb_prec && de > de_prec&& de_prec != 1)          // pour une mise du type 2 3 -> 2 4
+                || (nb > nb_prec && de == de_prec)                      // pour une mise de type 2 3 -> 3 3
+                || (de == 1 && nb >= (nb_prec+1)/2 && de_prec != 1)     // pour une mise de type 3 3 -> 2 Pakos
+                || (de_prec == 1 && nb >= nb_prec*2 +1)                 // pour une mise de type 2 1 -> 5 3
+            )
+        ) ;
 }

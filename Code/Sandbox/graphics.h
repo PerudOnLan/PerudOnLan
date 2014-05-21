@@ -22,9 +22,11 @@
 
 int init_graphique (int nbJoueurs, SDL_Surface ** gob, SDL_Surface ** des);
 
-void interface (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect *positions   );
+void interface (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect *positions);
 
 int melange (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect * positions);
 
-int choixAnnonce(Annonce * annonce, SDL_Surface * fond,int nbJoueurs, SDL_Surface ** gob, SDL_Rect * positions);
+int choixAnnonce(Annonce * annonce, SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect * positions);
+
+int demandeMise(Annonce * annonce, SDL_Surface * fond);
 #endif

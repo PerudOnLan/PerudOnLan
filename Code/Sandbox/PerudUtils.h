@@ -45,7 +45,6 @@ typedef enum {DEBUT, MISE, MENTEUR, EXACT, ANNONCE_INVALIDE} Type;
 
 typedef struct {
     Type type;
-    int tour;    //numéro du joueur dont c'est le tour
     union {
     struct {
         int nombre;
@@ -54,6 +53,7 @@ typedef struct {
         Booleen debut;
         Booleen menteur;
         Booleen exact;
+        int tour;    //numéro du joueur dont c'est le tour
      } info;
 } Annonce;
 

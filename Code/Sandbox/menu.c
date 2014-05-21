@@ -74,7 +74,6 @@ while(!quitter)
     //Bouton rejoindre: Surface
 
     SDL_Surface *boutonRejoindre = NULL;
-
     boutonRejoindre = SDL_CreateRGBSurface(SDL_HWSURFACE, (fond->w)/2,((fond->h)-200)/5 , 32, 0, 0, 0, 0);
     SDL_FillRect(boutonRejoindre,NULL,ROUGE);
     SDL_Rect positionRejoindre;
@@ -178,7 +177,6 @@ while(!quitter)
                             choixAnnonce(&annonce,fond,4,gobelets,positions) ;
                             continuer = FAUX;
                             quitter = VRAI;
-                            printf("%d\n", annonce.type);
                             free(gobelets);
                             free(desReference);
                         }
@@ -232,7 +230,6 @@ while(!quitter)
                         interface(fond,6,gobelets,positions) ;
                         melange(fond,6,gobelets, positions) ;
                         choixAnnonce(&annonce,fond,6,gobelets,positions);
-                        printf("%d\n", annonce.type);
                         continuer = FAUX;
                         quitter = VRAI;
                         free(gobelets);

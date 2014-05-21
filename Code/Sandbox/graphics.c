@@ -173,10 +173,6 @@ void interface (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect 
          exit(EXIT_FAILURE);
         }
 
-    SDL_Color couleurNoire = { 0,0,0 } ;
-    SDL_Color couleurRouge = { 200,0,0};
-
-
     SDL_FillRect(fond, NULL,VERT);
 
     positions[0].x = (((fond->w)/2)-(((gob[0])->w)/2));
@@ -324,7 +320,7 @@ return EXIT_SUCCESS;
 
 
 
-int choixAnnonce(Annonce * annonce, SDL_Surface * fond,int nbJoueurs, SDL_Surface ** gob, SDL_Rect * positions)
+int choixAnnonce(Annonce * annonce, SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect * positions)
 {
     TTF_Font *policePerudo = NULL;
     if ((policePerudo = TTF_OpenFont("../../Documents/policePerudo.ttf", (fond->w)/20))==NULL)
@@ -336,12 +332,9 @@ int choixAnnonce(Annonce * annonce, SDL_Surface * fond,int nbJoueurs, SDL_Surfac
     SDL_Color couleurNoire = { 0,0,0 } ;
     SDL_Color couleurRouge = { 200,0,0};
 
-    Booleen quitter = FAUX, continuer = VRAI;
+    Booleen continuer = VRAI;
     annonce->type = ANNONCE_INVALIDE;
     SDL_Event event;
-
-    while (!quitter)
-    {
 
     SDL_Flip(fond);
 
@@ -378,21 +371,19 @@ int choixAnnonce(Annonce * annonce, SDL_Surface * fond,int nbJoueurs, SDL_Surfac
                 {
                     case SDL_QUIT:
                         continuer = FAUX;
-                        quitter = VRAI;
-
                     break;
+
                     case SDL_MOUSEBUTTONDOWN:
                         if(event.button.button==SDL_BUTTON_LEFT)
                         {
                             if (estDans(event,boutonMise,positionMise))
                             {
                                 annonce->type = MISE;
-                                annonce->info.mise.nombre = 1;
-                                annonce->info.mise.de = 1;
+                                demandeMise(annonce,fond);
                                 continuer = FAUX;
-                                quitter = VRAI;
                                  //demande de la mise
                                 /** TODO */
+
                             }
 
                             if (estDans(event,boutonMenteur,positionMenteur))
@@ -400,7 +391,6 @@ int choixAnnonce(Annonce * annonce, SDL_Surface * fond,int nbJoueurs, SDL_Surfac
                                 annonce->type = MENTEUR;
                                 annonce->info.menteur = VRAI;
                                 continuer = FAUX;
-                                quitter = VRAI;
                             }
 
                             if (estDans(event,boutonExact,positionExact))
@@ -408,10 +398,10 @@ int choixAnnonce(Annonce * annonce, SDL_Surface * fond,int nbJoueurs, SDL_Surfac
                                 annonce->type = EXACT;
                                 annonce->info.exact = VRAI;
                                 continuer = FAUX;
-                                quitter = VRAI;
                             }
                         }
                     break;
+
                     default:
                     break;
                 }
@@ -419,9 +409,168 @@ int choixAnnonce(Annonce * annonce, SDL_Surface * fond,int nbJoueurs, SDL_Surfac
     SDL_FreeSurface(boutonMise);
     SDL_FreeSurface(boutonMenteur);
     SDL_FreeSurface(boutonExact);
-    }
-
 interface(fond, nbJoueurs,gob,positions);
 return EXIT_SUCCESS;
 }
 
+int demandeMise(Annonce * annonce, SDL_Surface * fond)
+{
+    SDL_FillRect(fond,NULL,VERT);
+    SDL_Color couleurViolette = {150,0,150};
+    SDL_Color couleurBlanche = {255,255,255};
+ //initialisation de la police de saisie
+        TTF_Font *policeSaisie = NULL;
+        if ((policeSaisie = TTF_OpenFont("../../Documents/arcadeclassic.ttf", (fond->w)/15))==NULL)
+        {
+            SDL_GetError();
+            fprintf(stderr,"Quelque chose cloche... Avez vous la police arcadeclassic.ttf ?");
+            exit(EXIT_FAILURE);
+        }
+
+       //On crée le champ de saisie
+        SDL_Surface *champSaisie = NULL;
+        champSaisie = SDL_CreateRGBSurface(SDL_HWSURFACE,(fond->w)/3,(fond->h)/8, 32, 0, 0, 0, 0);
+        SDL_FillRect(champSaisie,NULL,VIOLET);
+        SDL_Rect positionChamp;
+
+        //on positionne le champ de saisie
+        positionChamp.x = (fond->w)/4 - ((champSaisie->w)/2);
+        positionChamp.y = (fond->h)/4 - ((champSaisie->h)/2);
+        SDL_BlitSurface(champSaisie,NULL,fond,&positionChamp);
+
+
+    SDL_Flip(fond);
+    couleurDes couleur = rouge;
+    char lettreCourante = 'R';
+    recupInfos(NULL, &couleur);     // pour utiliser les dés de la bonne couleur pour l'affichage
+    char deGrand[50]="../../Documents/Des/R1G.png";
+
+    // on va charger les bonnes images
+    conversionCouleur(NULL,&lettreCourante,couleur);
+    deGrand[20] = lettreCourante;
+    SDL_Surface *des[6], *outliner = NULL, *antiOutliner = NULL;
+    SDL_Rect posDes[6], posOutliner;
+
+    // Et on définit un outliner
+
+    if ((outliner = IMG_Load("../../Documents/Des/outliner.png"))==NULL)
+    {
+        fprintf(stderr,"impossible de charger l'image du curseur");
+        outliner = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
+    }
+
+    if ((antiOutliner = IMG_Load("../../Documents/Des/antiOutliner.png"))==NULL)
+    {
+        fprintf(stderr,"impossible de charger l'image réciproque du curseur");
+        outliner = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
+    }
+
+    int i;
+    for(i=0; i<6; i++)
+    {
+        lettreCourante = i+'1';
+        deGrand[21] = lettreCourante;
+        if ((des[i] = IMG_Load(deGrand))==NULL)
+        {
+            fprintf(stderr,"impossible de charger l'image du dé D%d", i);
+            des[i] = IMG_Load("../../Documents/Erreur_graphique.png") ; //On charge une image quand même pour indiquer que quelque chose cloche
+        }
+
+        if (i<3)                        //on affiche la colonne de gauche
+        {
+            posDes[i].x = 2*((fond->w)/3) - 80;
+        }
+        else                            //celle de droite
+        {
+            posDes[i].x = 5*((fond->w)/6) - 80;
+        }
+
+        if ((i%3)==0)                   //on affiche la première ligne
+        {
+            posDes[i].y = 150;
+        }
+        else if ((i%3)==1)              //la deuxième
+        {
+            posDes[i].y = 90+((fond->h)/3);
+        }
+        else if ((i%3)==2)              //la troisième
+        {
+            posDes[i].y = 30 + 2*((fond->h)/3);
+        }
+
+        SDL_BlitSurface(des[i],NULL,fond,&posDes[i]);
+    }
+
+    posOutliner.x = posDes[1].x - 10;
+    posOutliner.y = posDes[1].y - 10;
+    SDL_BlitSurface(outliner,NULL,fond,&posOutliner);
+
+    SDL_Flip(fond);
+SDL_Event event;
+Booleen continuer = VRAI;
+char tampon[10];
+        while (continuer)
+        {
+            printf("abwaFE\n");
+            FE_WaitEvent(&event);
+            printf("%d\n", event.type);
+            switch(event.type)
+                {
+                    case SDL_QUIT:
+                        continuer = FAUX ;
+                    break;
+
+                    case SDL_KEYDOWN:
+                        if (event.key.keysym.sym == SDLK_ESCAPE)
+                        {
+                            continuer = FAUX;
+                        }
+                        if (event.key.keysym.sym == SDLK_SPACE) // bouton neutre
+                        {
+                        }
+                    break;
+
+                    case SDL_MOUSEBUTTONDOWN:
+                    printf("%d\n",event.button.button);
+                    if(event.button.button==SDL_BUTTON_LEFT)
+                    {
+                        for (i=0; i<6; i++)
+                        {
+                            if (estDans(event,des[i],posDes[i]))
+                            {
+                                if(annonce->info.mise.de != i)
+                                {
+                                    annonce->info.mise.de = i;
+                                    SDL_BlitSurface(antiOutliner,NULL,fond,&posOutliner);
+
+                                    posOutliner.x = posDes[i].x - 10;
+                                    posOutliner.y = posDes[i].y - 10;
+
+                                    SDL_BlitSurface(outliner,NULL,fond,&posOutliner);
+                                    SDL_Flip(fond);
+                                }
+                            }
+                            if (estDans(event,champSaisie,positionChamp))
+                            {
+                                printf("abwa\n");
+                                printf("wtf?\n");
+                                saisir(champSaisie,positionChamp,VIOLET,policeSaisie,couleurBlanche,couleurViolette,tampon,2,fond);
+
+                                printf("abwabwa\n");
+                            }
+                        }
+                    }
+                    break;
+                    default:
+                    break;
+                }
+        }
+//sans oublier les free
+for (i=0; i<6; i++)
+{
+    SDL_FreeSurface(des[i]);
+}
+SDL_FreeSurface(outliner);
+SDL_FreeSurface(antiOutliner);
+return EXIT_SUCCESS;
+}

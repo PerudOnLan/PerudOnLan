@@ -38,7 +38,6 @@ Booleen estDans (SDL_Event event, SDL_Surface * rectangle, SDL_Rect pos)
                         return FAUX;
                     }
                break;
-
                case SDL_MOUSEMOTION:
                     if (((event.motion.x) > pos.x)&& ((event.motion.x) < ((pos.x)+(rectangle->w)))
                         &&((event.motion.y) > pos.y)&&((event.motion.y)<((pos.y)+(rectangle->h))))
@@ -122,6 +121,7 @@ int saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * p
         while (continuer||longueur==0)
         {
             SDL_EnableKeyRepeat(500,50);
+            SDL_Delay(10);
             FE_WaitEvent(&event);
             switch(event.type)
             {
@@ -151,6 +151,8 @@ int saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * p
                             {
                                 mot[longueur]='\0';
                                 continuer = FAUX;
+                                SDL_FreeSurface(texteEntre);
+                                return EXIT_SUCCESS;
                             }
                             //on dégage le \n au casoù il ne serait pas consommé
                         break;
@@ -176,9 +178,6 @@ int saisir (SDL_Surface * champ, SDL_Rect pos, Uint32 couleurChamp, TTF_Font * p
                 texteEntre = TTF_RenderText_Shaded(police,mot,couleurPolice, couleurFond);
                 SDL_BlitSurface(texteEntre, NULL, fond, &positionEntre);
                 SDL_Flip(fond);
-                /* Ca c'est du debug */
-                printf("%d\n", longueur);
-                printf("%s\n", mot);
 
                 break;
                 default:
@@ -213,11 +212,17 @@ void recupInfos (int * resolution, couleurDes * couleur)
     {
         char tampon[10] = "";
         rewind(fconfig);
-        fgets(tampon,5,fconfig); // On vide "res="
-        (*resolution) = strtol((fgets(tampon,5,fconfig)),NULL,10); // on convertit le char en long
-        fgets(tampon,7,fconfig); //on vide "color="
-        (*couleur) = strtol((fgets(tampon,5,fconfig)),NULL,10); // Le chiffre donne directement la couleur, car couleurDes est un type énum
-       //DEBUG fprintf(stdout,"abwa res = %d et couleur = %d\n",resolution,couleur);
+        if (resolution != NULL)
+        {
+            fgets(tampon,5,fconfig); // On vide "res="
+            (*resolution) = strtol((fgets(tampon,5,fconfig)),NULL,10); // on convertit le char en long
+        }
+        if (couleur != NULL)
+        {
+            fgets(tampon,7,fconfig); //on vide "color="
+            (*couleur) = strtol((fgets(tampon,5,fconfig)),NULL,10); // Le chiffre donne directement la couleur, car couleurDes est un type énum
+        }
+
     }
 }
 
@@ -235,56 +240,59 @@ void recupInfos (int * resolution, couleurDes * couleur)
 
 void conversionCouleur(char * nom, char * lettreCouleur, couleurDes couleur)
 {
-    switch (couleur)
+    if (nom != NULL)
     {
-        case rouge:
-            nom[0] = 'r';
-            nom[1] = 'o';
-            nom[2] = 'u';
-            nom[3] = 'g';
-            nom[4] = 'e';
-            nom[5] = '\0';
-        break;
-        case vert:
-            nom[0] = 'v';
-            nom[1] = 'e';
-            nom[2] = 'r';
-            nom[3] = 't';
-            nom[4] = '\0';
-        break;
-        case bleu :
-            nom[0] = 'b';
-            nom[1] = 'l';
-            nom[2] = 'e';
-            nom[3] = 'u';
-            nom[4] = '\0';
-        break;
-        case jaune :
-            nom[0] = 'j';
-            nom[1] = 'a';
-            nom[2] = 'u';
-            nom[3] = 'n';
-            nom[4] = 'e';
-            nom[5] = '\0';
-        break;
-        case violet :
-            nom[0] = 'v';
-            nom[1] = 'i';
-            nom[2] = 'o';
-            nom[3] = 'l';
-            nom[4] = 'e';
-            nom[5] = 't';
-            nom[6] = '\0';
-        break;
-        case orange :
-            nom[0] = 'o';
-            nom[1] = 'r';
-            nom[2] = 'a';
-            nom[3] = 'n';
-            nom[4] = 'g';
-            nom[5] = 'e';
-            nom[6] = '\0';
-        break;
+    switch (couleur)
+        {
+            case rouge:
+                nom[0] = 'r';
+                nom[1] = 'o';
+                nom[2] = 'u';
+                nom[3] = 'g';
+                nom[4] = 'e';
+                nom[5] = '\0';
+            break;
+            case vert:
+                nom[0] = 'v';
+                nom[1] = 'e';
+                nom[2] = 'r';
+                nom[3] = 't';
+                nom[4] = '\0';
+            break;
+            case bleu :
+                nom[0] = 'b';
+                nom[1] = 'l';
+                nom[2] = 'e';
+                nom[3] = 'u';
+                nom[4] = '\0';
+            break;
+            case jaune :
+                nom[0] = 'j';
+                nom[1] = 'a';
+                nom[2] = 'u';
+                nom[3] = 'n';
+                nom[4] = 'e';
+                nom[5] = '\0';
+            break;
+            case violet :
+                nom[0] = 'v';
+                nom[1] = 'i';
+                nom[2] = 'o';
+                nom[3] = 'l';
+                nom[4] = 'e';
+                nom[5] = 't';
+                nom[6] = '\0';
+            break;
+            case orange :
+                nom[0] = 'o';
+                nom[1] = 'r';
+                nom[2] = 'a';
+                nom[3] = 'n';
+                nom[4] = 'g';
+                nom[5] = 'e';
+                nom[6] = '\0';
+            break;
+        }
     }
     if(lettreCouleur != NULL) //il est possible qu'on ne veuille pas de la lettre, auquel cas on appelle la fonction avec NULL en deuxième paramètre
     {
