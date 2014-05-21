@@ -105,6 +105,7 @@ SDL_Color couleurViolette = {150,0,150};
     // maintenant on demande les noms des joueurs (temporaire, après on les récupérera)
 
 
+ //inutile quand les joueurs sont sur des écrans séparés
     int i;
     for (i=0;i<nb_de_joueurs;i++)
     {
@@ -114,7 +115,7 @@ SDL_Color couleurViolette = {150,0,150};
         {
             joueurs[i].pseudo[j] = '\0';
         }
-        char texte[16]="NOM DU JOUEUR X";
+        char texte[16]="NOM DU JOUEUR";
         texte[14] = ('0'+i);
 
         texteAffiche = TTF_RenderText_Solid(policeAffichage,texte,couleurNoire);
@@ -160,22 +161,27 @@ SDL_Color couleurViolette = {150,0,150};
     init_graphique(nb_de_joueurs, gobelets, desReference); /** lancement de l'initialisation graphique et de l'interface de jeu */
     interface(fond, nb_de_joueurs, gobelets, positions );
 
+    // on initialise le jeu
+    int joueur_actuel, nb_de_des_max;
 
-    Booleen premier_tour = VRAI; // pour l'initialisation
+    joueur_actuel=0;
+    nb_de_des_max = nb_de_joueurs * 5;
+    for (i=0;i<nb_de_joueurs;i++)
+    {
+        joueurs[i].nb_de_des = 5;
+    }
+
     while (continuer)  // la boucle principale, jusqu'a elimination d'un joueur
     {
-        int i, j, k, tmp, joueur_actuel, nb_de_des_max; // initialisation des variables
-        Booleen tour_de_jeu = VRAI; Annonce annonce_precedente, annonce; //encore d'autres
-        if (premier_tour)
-        {
-            // pour le premier tour, on fixe certains parametres
-            joueur_actuel=0;
-            nb_de_des_max = nb_de_joueurs * 5;
-            for (i=0;i<nb_de_joueurs;i++)
-            {
-                joueurs[i].nb_de_des = 5;
-            }
-        }
+        int i, j, k, tmp; // initialisation des variables
+        Booleen tour_de_jeu = VRAI;
+        Annonce annonce_precedente, annonce; //encore d'autres
+
+        annonce_precedente.type = MISE; //au premier tour de jeu, il n' y a pas encore eu d'annonce précédente
+        annonce_precedente.info.nombre = 0;
+        annonce_precedente.info.de = 2;
+
+
         for (i=0;i<nb_de_joueurs;i++)
         {
             for (k=0;k<6;k++)
@@ -198,7 +204,7 @@ SDL_Color couleurViolette = {150,0,150};
             fprintf(stdout, "\nDes du joueur %s :\n", joueurs[i].pseudo);
             for (k=0;k<6;k++)
             {
-                fprintf(stdout, "%d ", joueurs[i].des[k]);  // pour controler si les annonces et le resultat sont coherents
+      /**TODO */          fprintf(stdout, "%d ", joueurs[i].des[k]);  // pour controler si les annonces et le resultat sont coherents
             }
         }
         Booleen premiere_mise = VRAI; // encore pour la definition de certaines conditions
@@ -206,36 +212,23 @@ SDL_Color couleurViolette = {150,0,150};
         // boucle secondaire, jusqu'a perte ou gain d'un de
         while (tour_de_jeu)
         {
-            int m; int e; annonce.type = MISE; int somme = 0; // encore des variables
+            annonce.type = ANNONCE_INVALIDE; int somme = 0; // encore des variables
 
             // on fait ca si on a deja une mise avant, pour le jeu ce sera gere graphiquement
             if (!premiere_mise)
             {
-                fprintf(stdout, "\nMenteur ? (0/1)\n");
-                scanf("%d", &m);
-                if (m==1)
-                {
-                    annonce.type = MENTEUR; // c'est ici qu'on determine le type pour l'union
-                }
-                else if (m==0)
-                {
-                    fprintf(stdout, "\nExact ? (0/1)\n");
-                    scanf("%d", &e);
-                    if (e==1)
-                    {
-                        annonce.type = EXACT;  // ou ici
-                    }
-                    else if (e==0)
-                    {
-                        annonce.type = MISE;  //ou la
-                    }
-                }
-                else
-                {
-                    fprintf(stdout, "\nAnnonce incorrecte.\n");
-                }
+                do{
+                choixAnnonce(&annonce,fond,nb_de_joueurs,gobelets,positions);
+                } while (annonce.type == ANNONCE_INVALIDE);
             }
 
+            else    // au premier tour on n'a le droit que de miser
+            {
+                do{
+                choixAnnonce(&annonce,fond,nb_de_joueurs,gobelets,positions);
+                } while (annonce.type != MISE) ;
+
+            }
             // gestion des differentes annonces en fonction des cas
             switch (annonce.type)
             {
@@ -244,22 +237,21 @@ SDL_Color couleurViolette = {150,0,150};
                     Booleen annonce_incorrecte = VRAI; // pour s'assurer que le joueur fait une annonce correcte
                     while (annonce_incorrecte)
                     {
-                        fprintf(stdout, "\nMise du joueur %s ?\n", joueurs[(joueur_actuel%nb_de_joueurs)].pseudo); // avec le modulo pour rester entre les differents joueurs
-                        scanf ("%d %d", &annonce.info.mise.nombre, &annonce.info.mise.de);
+                        choixAnnonce(&annonce,fond,nb_de_joueurs,gobelets,positions);
                         if (premiere_mise) // un peu special puisqu'il n'y a pas d'annonce precedente
                         {
-                            if (annonce.info.mise.de > 0 && annonce.info.mise.nombre > 0 && annonce.info.mise.de <7 && annonce.info.mise.nombre < nb_de_des_max) // pleins de conditions
+                            if (annonce.info.mise.nombre > 0  && annonce.info.mise.nombre < nb_de_des_max) // pleins de conditions
                             {
                                 annonce_precedente.info.mise.nombre = annonce.info.mise.nombre;
                                 annonce_precedente.info.mise.de = annonce.info.mise.de;
-                                fprintf(stdout, "Le joueur %s a mise : %d %d", joueurs[(joueur_actuel%nb_de_joueurs)].pseudo, annonce.info.mise.nombre, annonce.info.mise.de);
+              /**TODO */                  fprintf(stdout, "Le joueur %s a mise : %d %d", joueurs[(joueur_actuel%nb_de_joueurs)].pseudo, annonce.info.mise.nombre, annonce.info.mise.de);
                                 joueur_actuel++; // on passe au joueur suivant
                                 premiere_mise = FAUX; // la premiere mise est faite
                                 annonce_incorrecte = FAUX; // les conditions sont la pour ca
                             }
                             else
                             {
-                                fprintf(stdout, "\nAnnonce incorrecte.\n");
+              /**TODO */                  fprintf(stdout, "\nAnnonce incorrecte.\n");
                             }
                         }
 
@@ -354,7 +346,6 @@ SDL_Color couleurViolette = {150,0,150};
             } // cette accolade est pour la fin du switch
 
         } // la on sort de la boucle secondaire
-        premier_tour = FAUX; // a ce stade la le premier tour est fini
         for (i=0;i<nb_de_joueurs;i++)
         {
             if (joueurs[i].nb_de_des==0)
@@ -374,7 +365,8 @@ SDL_Color couleurViolette = {150,0,150};
 {
 SDL_FreeSurface(gobelets[i]);
 }
-
+    free(gobelets);
+    free(positions);
     TTF_CloseFont(policeSaisie);
     TTF_CloseFont(policeAffichage);
     return EXIT_SUCCESS;

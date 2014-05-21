@@ -19,7 +19,7 @@ int main(int argc, char **argv)
   int count = 0;
   int port = 6666;
   int limit = 1000;
-  int message ;
+  int message = 35;
   Annonce mess;
   IPaddress *monIP = NULL;
 
@@ -56,7 +56,7 @@ printf("3 OK\n");
         break;
 
       case NET2_TCPRECEIVEEVENT:
-        while (0 != (len = NET2_TCPRead(NET2_GetSocket(&ev), buf, sizeof(buf))))
+        while (0 != (len = read(NET2_GetSocket(&ev), buf, sizeof(buf))))
         {
           int i;
 
@@ -78,9 +78,16 @@ printf("3 OK\n");
                 NET2_TCPSend(NET2_GetSocket(&ev), buf, sizeof(buf));
                 count += sizeof(buf);
             }
+    */
+
+ /* int bytes;
+
+
+              while ((bytes = fread(s, mess, sizeof(union))) > 0)
+                fwrite(1, mess, bytes);
 */
 
-        if (-1 == NET2_TCPSend(NET2_GetSocket(&ev), buf, len))
+        if (-1 == write(NET2_GetSocket(&ev), &message, sizeof(int)))
             {
                 printf("RECIEVE SEND FAILED\n");
                 NET2_TCPClose(NET2_GetSocket(&ev));
@@ -125,10 +132,11 @@ printf("3 OK\n");
       printf("9 OK\n");
       break;
     }
-    if (fread(&message, sizeof(int) , 1, NET2_GetSocket(&ev)) != 0 )
+   /* if (fread(&message, sizeof(int) , 1, NET2_GetSocket(&ev)) != 0 )
     {
     printf("%d",message);
     }
+    */
   }
 printf("10 OK\n");
   mySDL_Quit();

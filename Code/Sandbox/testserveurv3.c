@@ -24,7 +24,7 @@ int main(int argc, char **argv)
   int nbrjoueurs;
   int message =42;
   Annonce mess;
-
+/*
   if(argc =! 2) {
   fprintf(stderr, "Mauvaise utilistation: nbr joueurs");
   exit(1);
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "Mauvaise utilistation: nbr joueurs");
     exit(1);
     }
-
+*/
 
   memset(next, 0, sizeof(next));
 
@@ -46,12 +46,12 @@ int main(int argc, char **argv)
                   SDL_INIT_NOPARACHUTE);
 
   NET2_TCPAcceptOn(port);
-
+/*
   if(count>nbrjoueurs) {
     fprintf(stderr, "Le nombre maximal de joueur a été atteint");
     exit(0);
     }
-
+*/
   while (FE_WaitEvent(&ev))
   {
     switch (ev.type)
@@ -63,23 +63,24 @@ int main(int argc, char **argv)
         count++;
         printf("accept(%d)\n", NET2_GetSocket(&ev));
         s = NET2_GetSocket(&ev);
-        if (-1 == NET2_TCPSend(s, welcome, sizeof(welcome) - 1))
+        if (-1 == write(s, "plop", sizeof("plop")-1))
         {
           printf("WELCOME SEND FAILED\n");
         }
+        NET2_TCPSend(s, buf, len)
         next[s] = 0;
         break;
 
       case NET2_TCPRECEIVEEVENT:
 
         s = NET2_GetSocket(&ev);
-        while (0 != (len = NET2_TCPRead(s, buf, sizeof(buf))))
+        while (0 != (len = read(s, welcome, sizeof(welcome) -1)))
         {
           int i;
 
 
 
-          if (-1 == NET2_TCPSend(s, buf, len))
+          if (-1 == write(s, welcome, sizeof(welcome)))
           {
             printf("Erreur de reception message\n");
           }
@@ -112,11 +113,13 @@ int main(int argc, char **argv)
       exit(0);
       break;
     }
-     if (fwrite(&message, sizeof(int) , 1, NET2_GetSocket(&ev)) != 0 )
+    /* if (fwrite(&message, sizeof(int) , 1, NET2_GetSocket(&ev)) != 0 )
     {
     printf("%d",message);
-  }
-
+    }
+*/
+    }
   mySDL_Quit();
+  return EXIT_SUCCESS;
 }
 

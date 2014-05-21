@@ -30,19 +30,19 @@ doxygen :
 clean : 
 	rm -f perudo.o menu.o jeu.o PerudUtils.o testserveurv3.o testclientv3.o testsUnitaires.o ia.o graphics.o
 
-serveur : testserveurv3.o PerudUtils.o
-	$(CC) $(CFLAGS) testserveurv3.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o Serveur
+serveur : server.o PerudUtils.o
+	$(CC) $(CFLAGS) server.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o Serveur
 
-testserveurv3.o : testserveurv3.c
-	$(CC) $(CFLAGS) -I$(PHEADERS) -c testserveurv3.c
+server.o : server.cpp
+	$(CC) $(CFLAGS) -I$(PHEADERS) -c server.cpp
 
-client : testclientv3.o PerudUtils.o
-	$(CC) $(CFLAGS) testclientv3.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o Client
+client : client.o PerudUtils.o
+	$(CC) $(CFLAGS) client.o PerudUtils.o -L$(PLIBS) $(SDLLIBS) -o Client
 
-testclientv3.o : testclientv3.c
-	$(CC) $(CFLAGS) -I$(PHEADERS) -c testclientv3.c
+client.o : client.cpp
+	$(CC) $(CFLAGS) -I$(PHEADERS) -c client.cpp
 
-testsUnitaires: testsUnitaires.o PerudUtils.o ia.o 
+testsUnitaires: testsUnitaires.o PerudUtils.o ia.o 	
 	$(CC) $(CFLAGS) testsUnitaires.o PerudUtils.o ia.o -L$(PLIBS) $(SDLLIBS) -o TestsUnitaires
 
 ia.o : ia.c

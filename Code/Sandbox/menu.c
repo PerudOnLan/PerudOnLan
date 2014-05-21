@@ -154,6 +154,8 @@ while(!quitter)
                             SDL_Surface ** gobelets = NULL;
                             SDL_Surface ** desReference = NULL;
                             SDL_Rect * positions = NULL;
+                            Annonce annonce;
+                            annonce.type = ANNONCE_INVALIDE;
                             if ((gobelets = malloc(4* (sizeof(SDL_Surface))))==NULL)
                             {
                                 perror("malloc");
@@ -173,8 +175,10 @@ while(!quitter)
                             init_graphique(4,gobelets,desReference) ;
                             interface(fond,4,gobelets,positions) ;
                             melange(fond,4,gobelets, positions) ;
+                            choixAnnonce(&annonce,fond,4,gobelets,positions) ;
                             continuer = FAUX;
                             quitter = VRAI;
+                            printf("%d\n", annonce.type);
                             free(gobelets);
                             free(desReference);
                         }
@@ -206,6 +210,8 @@ while(!quitter)
                         SDL_Surface ** gobelets = NULL;
                         SDL_Surface ** desReference = NULL;
                         SDL_Rect * positions = NULL;
+                        Annonce annonce;
+                        annonce.type = ANNONCE_INVALIDE;
                         if ((gobelets = malloc(6* (sizeof(SDL_Surface))))==NULL)
                         {
                             perror("malloc");
@@ -225,6 +231,8 @@ while(!quitter)
                         init_graphique(6,gobelets,desReference) ;
                         interface(fond,6,gobelets,positions) ;
                         melange(fond,6,gobelets, positions) ;
+                        choixAnnonce(&annonce,fond,6,gobelets,positions);
+                        printf("%d\n", annonce.type);
                         continuer = FAUX;
                         quitter = VRAI;
                         free(gobelets);

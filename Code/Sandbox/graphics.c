@@ -145,6 +145,7 @@ int init_graphique (int nbJoueurs, SDL_Surface ** gob, SDL_Surface ** des)
             }
         }
     }
+
 return EXIT_SUCCESS;
 }
 
@@ -162,9 +163,8 @@ return EXIT_SUCCESS;
 * \author Dede
 * \date 10/04
 */
-Annonce interface (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect * positions)
+void interface (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect * positions)
 {
-    Booleen quitter = FAUX;
    TTF_Font *policePerudo = NULL;
     if ((policePerudo = TTF_OpenFont("../../Documents/policePerudo.ttf", (fond->w)/20))==NULL)
         {
@@ -176,21 +176,8 @@ Annonce interface (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Re
     SDL_Color couleurNoire = { 0,0,0 } ;
     SDL_Color couleurRouge = { 200,0,0};
 
-    Annonce annonce;
-    //par défaut l'annonce est invalide
-    annonce.type = ANNONCE_INVALIDE;
 
-while (1)
-    {
-    Booleen continuer = VRAI;
     SDL_FillRect(fond, NULL,VERT);
-    SDL_Event event;
-
-    // position des boutons
-    SDL_Surface * boutonMise;
-    SDL_Surface * boutonMenteur;
-    SDL_Surface * boutonExact;
-    SDL_Rect positionMise, positionMenteur, positionExact;
 
     positions[0].x = (((fond->w)/2)-(((gob[0])->w)/2));
     positions[0].y = ((4*((fond->h)/5))-(((gob[0])->h)/2));
@@ -289,77 +276,8 @@ while (1)
         break;
     }
 
-    boutonMise = TTF_RenderText_Shaded(policePerudo,"MISE", couleurNoire, couleurRouge);
-    positionMise.x = ((fond->w)/2) -(boutonMise->w/2);
-    positionMise.y = ((((fond->h)/2))) - 6*(boutonMise->h/2);
-    SDL_BlitSurface(boutonMise, NULL, fond, &positionMise);
-
-
-    boutonMenteur = TTF_RenderText_Shaded(policePerudo,"MENTEUR", couleurNoire, couleurRouge);
-    positionMenteur.x = ((fond->w)/2) -(boutonMenteur->w/2);
-    positionMenteur.y = ((((fond->h)/2))) - 3*(boutonMenteur->h/2);
-    SDL_BlitSurface(boutonMenteur, NULL, fond, &positionMenteur);
-
-
-    boutonExact = TTF_RenderText_Shaded(policePerudo,"EXACT", couleurNoire, couleurRouge);
-    positionExact.x = ((fond->w)/2) -(boutonExact->w/2);
-    positionExact.y = ((((fond->h)/2)));
-    SDL_BlitSurface(boutonExact, NULL, fond, &positionExact);
-
     // Là on affiche
     SDL_Flip(fond);
-
-    if(quitter)             //si à la précédente boucle où l'on attend une réponse du joueur, il a cliqué sur quelque chose entrainant l'envoi de l'annonce, on réaffiche d'abord une belle interface avant d'envoyer
-    {
-        return annonce;
-    }
-
-    while(continuer)
-        {
-        FE_WaitEvent(&event);
-        switch(event.type)
-                {
-                    case SDL_QUIT:
-                        continuer = FAUX;
-                        quitter = VRAI;
-                    break;
-                    case SDL_MOUSEBUTTONDOWN:
-                        if(event.button.button==SDL_BUTTON_LEFT)
-                        {
-                            if (estDans(event,boutonMise,positionMise))
-                            {
-                                annonce.type = MISE;
-                                annonce.info.mise.nombre = 1;
-                                annonce.info.mise.de = 1;
-                                continuer = FAUX;
-                                quitter = VRAI;
-                                 //demande de la mise
-                                /** TODO */
-                            }
-
-                            if (estDans(event,boutonMenteur,positionMenteur))
-                            {
-                                annonce.type = MENTEUR;
-                                annonce.info.menteur = VRAI;
-                                continuer = FAUX;
-                                quitter = VRAI;
-                            }
-
-                            if (estDans(event,boutonExact,positionExact))
-                            {
-                                annonce.type = EXACT;
-                                annonce.info.exact = VRAI;
-                                continuer = FAUX;
-                                quitter = VRAI;
-                            }
-                        }
-                    break;
-                    default:
-                    break;
-                }
-        }
-    }
-return annonce;
 }
 
 /**
@@ -386,7 +304,7 @@ int melange (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect * p
     {
         pos[i]=positions[i];     //on sauvegarde les positions normales pour osciller autour de ça
     }
-    while(timerActuel - timerDebut < 2000)
+    while(timerActuel - timerDebut < 1000)
     {
 
         SDL_FillRect(fond,NULL,VERT);
@@ -403,3 +321,107 @@ int melange (SDL_Surface * fond, int nbJoueurs, SDL_Surface ** gob, SDL_Rect * p
 
 return EXIT_SUCCESS;
 }
+
+
+
+int choixAnnonce(Annonce * annonce, SDL_Surface * fond,int nbJoueurs, SDL_Surface ** gob, SDL_Rect * positions)
+{
+    TTF_Font *policePerudo = NULL;
+    if ((policePerudo = TTF_OpenFont("../../Documents/policePerudo.ttf", (fond->w)/20))==NULL)
+        {
+         SDL_GetError();
+         fprintf(stderr,"Quelque chose cloche... Avez vous la police policePerudo.ttf ?");
+         exit(EXIT_FAILURE);
+        }
+    SDL_Color couleurNoire = { 0,0,0 } ;
+    SDL_Color couleurRouge = { 200,0,0};
+
+    Booleen quitter = FAUX, continuer = VRAI;
+    annonce->type = ANNONCE_INVALIDE;
+    SDL_Event event;
+
+    while (!quitter)
+    {
+
+    SDL_Flip(fond);
+
+   // position des boutons
+    SDL_Surface * boutonMise;
+    SDL_Surface * boutonMenteur;
+    SDL_Surface * boutonExact;
+    SDL_Rect positionMise, positionMenteur, positionExact;
+
+
+    boutonMise = TTF_RenderText_Shaded(policePerudo,"MISE", couleurNoire, couleurRouge);
+    positionMise.x = ((fond->w)/2) -(boutonMise->w/2);
+    positionMise.y = ((((fond->h)/2))) - 6*(boutonMise->h/2);
+    SDL_BlitSurface(boutonMise, NULL, fond, &positionMise);
+
+
+    boutonMenteur = TTF_RenderText_Shaded(policePerudo,"MENTEUR", couleurNoire, couleurRouge);
+    positionMenteur.x = ((fond->w)/2) -(boutonMenteur->w/2);
+    positionMenteur.y = ((((fond->h)/2))) - 3*(boutonMenteur->h/2);
+    SDL_BlitSurface(boutonMenteur, NULL, fond, &positionMenteur);
+
+
+    boutonExact = TTF_RenderText_Shaded(policePerudo,"EXACT", couleurNoire, couleurRouge);
+    positionExact.x = ((fond->w)/2) -(boutonExact->w/2);
+    positionExact.y = ((((fond->h)/2)));
+    SDL_BlitSurface(boutonExact, NULL, fond, &positionExact);
+
+    SDL_Flip(fond);
+    while(continuer)
+        {
+        FE_WaitEvent(&event);
+        /**TODO Analyse réseau*/
+        switch(event.type)
+                {
+                    case SDL_QUIT:
+                        continuer = FAUX;
+                        quitter = VRAI;
+
+                    break;
+                    case SDL_MOUSEBUTTONDOWN:
+                        if(event.button.button==SDL_BUTTON_LEFT)
+                        {
+                            if (estDans(event,boutonMise,positionMise))
+                            {
+                                annonce->type = MISE;
+                                annonce->info.mise.nombre = 1;
+                                annonce->info.mise.de = 1;
+                                continuer = FAUX;
+                                quitter = VRAI;
+                                 //demande de la mise
+                                /** TODO */
+                            }
+
+                            if (estDans(event,boutonMenteur,positionMenteur))
+                            {
+                                annonce->type = MENTEUR;
+                                annonce->info.menteur = VRAI;
+                                continuer = FAUX;
+                                quitter = VRAI;
+                            }
+
+                            if (estDans(event,boutonExact,positionExact))
+                            {
+                                annonce->type = EXACT;
+                                annonce->info.exact = VRAI;
+                                continuer = FAUX;
+                                quitter = VRAI;
+                            }
+                        }
+                    break;
+                    default:
+                    break;
+                }
+        }
+    SDL_FreeSurface(boutonMise);
+    SDL_FreeSurface(boutonMenteur);
+    SDL_FreeSurface(boutonExact);
+    }
+
+interface(fond, nbJoueurs,gob,positions);
+return EXIT_SUCCESS;
+}
+
